@@ -20,3 +20,9 @@ class Point:
         dist = self.manhattanDistance(other)
         return sqrt(dist[0] ** 2 + dist[1] ** 2)
 
+    def __repr__(self):
+        return (self.x,self.y)
+
+    def __str__(self):
+        return "(" + self.x + ", " + self.y + " )"
+

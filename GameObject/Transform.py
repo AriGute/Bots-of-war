@@ -1,4 +1,4 @@
-import Point
+from GameObject import Point
 
 class Transform:
 

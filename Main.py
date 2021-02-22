@@ -12,13 +12,15 @@ class App:
         self._display_surf = None
         self.size = self.weight, self.height = 800, 600
 
+        self.clock = pygame.time.Clock()
+
         self.scene = ExmpleScene()
 
     def on_init(self):
         pygame.init()
         self._display_surf = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
         self._running = True
-
+        self.clock.tick(30)  # set the frame rate to 30
 
     def on_event(self, event):
         if event.type == pygame.QUIT:
@@ -26,10 +28,10 @@ class App:
 
     # TODO: understand python casting and how to use the fucking class........
     def on_loop(self):
-        self.scene.update()
+        self.scene.runScene()
 
     def on_render(self):
-       pass
+        self.scene.drawScene(self._display_surf)
 
     def on_cleanup(self):
         pygame.quit()

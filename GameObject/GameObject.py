@@ -1,8 +1,7 @@
-import pygame
-
-from GameObject import Tag
-from GameObject import Transform
-
+from pygame import surface
+from GameObject.Tag import Tag
+from GameObject.Transform import Transform
+from GameObject.Point import Point
 
 
 class GameObject:
@@ -13,7 +12,7 @@ class GameObject:
         self.id = self.__GenerateId()
         self.name = name
         self.tag = Tag()
-        self.transform = Transform()
+        self.transform = Transform(Point())
         self.img = None
 
     def __GenerateId(self):
@@ -25,6 +24,15 @@ class GameObject:
         return GameObject.__staticId-1
 
     def update(self):
+        """
+        this method run every frame
+        and should handle all the logic of an object.
+
+        *need to ovveride*
+        """
         pass
 
-
+    def draw(self, display_surf):
+        if self.img is not None:
+            display_surf.blit(self.img, (100,100))
+            print(self.transform.position)

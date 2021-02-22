@@ -9,6 +9,10 @@ class Scene:
     def __init__(self):
         self.gameObjectList = []
 
-    def update(self):
+    def runScene(self):
         for obj in self.gameObjectList:
-            obj.update(self)
+            obj.update()
+
+    def drawScene(self, display_surf):
+        for obj in self.gameObjectList:
+            obj.draw(display_surf)

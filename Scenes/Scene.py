@@ -9,3 +9,6 @@ class Scene:
     def __init__(self):
         self.gameObjectList = []
 
+    def update(self):
+        for obj in self.gameObjectList:
+            obj.update(self)

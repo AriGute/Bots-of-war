@@ -1,7 +1,7 @@
 import pygame
 
 from GameObject import GameObject
-from Scenes.Scene import 
+from Scenes.ExempleScene import ExmpleScene
 
 # for any explation for the code -> http://pygametutorials.wikidot.com/tutorials-basic
 
@@ -12,15 +12,13 @@ class App:
         self._display_surf = None
         self.size = self.weight, self.height = 800, 600
 
-        self.startScene = ExmpleScene()
+        self.scene = ExmpleScene()
 
     def on_init(self):
         pygame.init()
         self._display_surf = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
         self._running = True
 
-    #     running exmple scene
-    #     startScene = Scene.ExmpleObj()
 
     def on_event(self, event):
         if event.type == pygame.QUIT:
@@ -28,8 +26,7 @@ class App:
 
     # TODO: understand python casting and how to use the fucking class........
     def on_loop(self):
-        for gameObject in self.startScene.gameObjectList:
-            gameObject.update()
+        self.scene.update()
 
     def on_render(self):
        pass
@@ -49,10 +46,7 @@ class App:
         self.on_cleanup()
 
     # TODO: add method to Scene that throw exeption and if Main catch the exeption that mean the current Scene is ended.
-    def next_scene(self):
-        self.currentScene += 1
-        if self.sceneList[self.currentScene] is None:
-            pygame.quit()
+
 
 if __name__ == "__main__":
     theApp = App()

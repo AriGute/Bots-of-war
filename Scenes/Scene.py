@@ -9,10 +9,3 @@ class Scene:
     def __init__(self):
         self.gameObjectList = []
 
-class ExmpleScene(Scene):
-    def __init__(self):
-        Scene.__init__()
-        self.gameObjectList.append(ExmpleObj)
-
-    def __repr__(self):
-        return self.gameObjectList

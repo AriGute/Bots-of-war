@@ -1,7 +1,7 @@
 import pygame
 
 from GameObject import GameObject
-from Scenes import Scene
+from Scenes.Scene import 
 
 # for any explation for the code -> http://pygametutorials.wikidot.com/tutorials-basic
 
@@ -12,8 +12,7 @@ class App:
         self._display_surf = None
         self.size = self.weight, self.height = 800, 600
 
-        self.sceneList = []
-        self.currentScene = 0;
+        self.startScene = ExmpleScene()
 
     def on_init(self):
         pygame.init()
@@ -21,7 +20,7 @@ class App:
         self._running = True
 
     #     running exmple scene
-        self.sceneList.append(Scene.ExmpleObj)
+    #     startScene = Scene.ExmpleObj()
 
     def on_event(self, event):
         if event.type == pygame.QUIT:
@@ -29,12 +28,11 @@ class App:
 
     # TODO: understand python casting and how to use the fucking class........
     def on_loop(self):
-        for gameObject in Scene.ExmpleObj(self.sceneList[self.currentScene]):
+        for gameObject in self.startScene.gameObjectList:
             gameObject.update()
 
     def on_render(self):
-        for gameObject in self.sceneList[self.currentScene]:
-            self._display_surf.blit(gameObject.img, gameObject.transform.position)
+       pass
 
     def on_cleanup(self):
         pygame.quit()

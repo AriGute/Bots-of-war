@@ -4,9 +4,9 @@ from math import sqrt
 class Point:
 
     # The Initial point set to (x,y) = (0,0)
-    def __init__(self, x=0, y=0):
-        self.x = x
-        self.y = y
+    def __init__(self, position = (0,0)):
+        self.x = position[0]
+        self.y = position[1]
 
     # Returns the distance of 2 points in a tuple -> (x,y)
     # Manhattan distance
@@ -19,4 +19,7 @@ class Point:
     def distance(self, other):
         dist = self.manhattanDistance(other)
         return sqrt(dist[0] ** 2 + dist[1] ** 2)
+
+    def __str__(self):
+        return "(" + str(self.x) + ", " + str(self.y) + " )"
 

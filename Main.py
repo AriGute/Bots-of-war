@@ -1,7 +1,7 @@
 import pygame
 
 from GameObject import GameObject
-from Scenes.ExempleScene import ExmpleScene
+from Scenes.GameScene import GameScene
 
 # for any explation for the code -> http://pygametutorials.wikidot.com/tutorials-basic
 
@@ -14,7 +14,7 @@ class App:
 
         self.clock = pygame.time.Clock()
 
-        self.scene = ExmpleScene()
+        self.scene = GameScene(self.nextScene)
 
     def on_init(self):
         pygame.init()
@@ -23,15 +23,16 @@ class App:
         self.clock.tick(30)  # set the frame rate to 30
 
     def on_event(self, event):
+        self.scene.eventListener(event)
         if event.type == pygame.QUIT:
             self._running = False
 
-    # TODO: understand python casting and how to use the fucking class........
     def on_loop(self):
         self.scene.runScene()
 
     def on_render(self):
         self.scene.drawScene(self._display_surf)
+        pygame.display.update()
 
     def on_cleanup(self):
         pygame.quit()
@@ -45,10 +46,11 @@ class App:
                 self.on_event(event)
             self.on_loop()
             self.on_render()
+
         self.on_cleanup()
 
-    # TODO: add method to Scene that throw exeption and if Main catch the exeption that mean the current Scene is ended.
-
+    def nextScene(self, scene = None):
+        self.scene = scene
 
 if __name__ == "__main__":
     theApp = App()

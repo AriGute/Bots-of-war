@@ -2,10 +2,7 @@ from Scenes.Scene import Scene
 from Objects.ExmpleObj import ExmpleObj
 
 class ExmpleScene(Scene):
-    def __init__(self):
-        Scene.__init__(self)
+    def __init__(self, listener):
+        Scene.__init__(self, listener)
+        self.gameObjectList.append(ExmpleObj((100,100)))
 
-        self.gameObjectList.append(ExmpleObj())
-
-    def __repr__(self):
-        return self.gameObjectList

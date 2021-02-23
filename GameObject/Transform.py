@@ -13,7 +13,7 @@ class Transform:
         "sw": "SOUTH WEST"
     }
 
-    def __init__(self, point):
+    def __init__(self):
         self._position = Point()
         self.direction = Transform.direction["north"]
 
@@ -21,12 +21,11 @@ class Transform:
         self.direction = Transform.direction[direction]
 
     def get_position(self):
-        return (self.position.x, self.position.y)
+        return (self._position.x, self._position.y)
 
-    def set_position(self, pos):
+    def set_position(self, position):
         """
         :param pos: next position as Point
         :return: nothing
         """
-        self.Point.x = pos.x
-        self.Point.y = pos.y
+        self._position = Point(position)

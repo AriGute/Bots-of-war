@@ -3,16 +3,15 @@ from GameObject.Tag import Tag
 from GameObject.Transform import Transform
 from GameObject.Point import Point
 
-
 class GameObject:
     # private static id for obj
     __staticId = 0;
 
-    def __init__(self, name='unnamed'):
+    def __init__(self, name='unnamed', position=(0, 0)):
         self.id = self.__GenerateId()
         self.name = name
         self.tag = Tag()
-        self.transform = Transform(Point())
+        self.transform = Transform()
         self.img = None
 
     def __GenerateId(self):
@@ -30,9 +29,8 @@ class GameObject:
 
         *need to ovveride*
         """
-        pass
+        raise NotImplementedError
 
     def draw(self, display_surf):
         if self.img is not None:
-            display_surf.blit(self.img, (100,100))
-            print(self.transform.position)
+            display_surf.blit(self.img, self.transform.get_position())

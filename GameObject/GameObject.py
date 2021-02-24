@@ -34,3 +34,4 @@ class GameObject:
     def draw(self, display_surf):
         if self.img is not None:
             display_surf.blit(self.img, self.transform.get_position())
+

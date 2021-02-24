@@ -8,4 +8,4 @@ class Ground(GameObject):
         self.transform.set_position((0,0))
 
     def update(self):
-        print("ground")
+        pass

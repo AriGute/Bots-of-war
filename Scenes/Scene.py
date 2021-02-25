@@ -65,3 +65,6 @@ class Scene:
         :return: gameObject from the gameObjectList of the Scene
         """
         return self._gameObjectList.get(k)
+
+    def drawTiledMap(self, display_surf):
+        pass

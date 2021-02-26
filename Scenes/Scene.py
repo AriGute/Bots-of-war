@@ -1,3 +1,5 @@
+from math import trunc
+
 """
 Scene represent some kind of game state(for exemple: main menu, gameMode etc...).
 Wen the Main loop is focusing on some scene then for each element in the gameObj list
@@ -8,6 +10,13 @@ class Scene:
         self._gameObjectList = {}
         self.nextScene = None
         self.endSceneListener = listener
+        self.display_surf = None
+        # Resources hold all the tiled map img or any other need to be "fast loaded" img.
+        self.Resources = []
+        # step is the number of pixels per cell in the tiled map.
+        self.step = None
+        # tiledMpa is a matrix n on m that each matrix cell represent pixels group(img with size step x step).
+        self.tiledMap = None
 
     def eventListener(self, event):
         """
@@ -21,8 +30,13 @@ class Scene:
         """
         Every frame call the update method of every gameObject of this Scene.
         """
+        self.update()
         for obj in self._gameObjectList.values():
             obj.update()
+            self.redraw(obj.transform.get_position())
+
+    def update(self):
+        raise NotImplementedError
 
     def drawScene(self, display_surf):
         """
@@ -67,4 +81,23 @@ class Scene:
         return self._gameObjectList.get(k)
 
     def drawTiledMap(self, display_surf):
-        pass
+        """
+        Draw Tilled map on the display surface once.
+        """
+        self.display_surf = display_surf
+        for j in range(0, len(self.tiledMap)):
+            for i in range(0, len(self.tiledMap[0])):
+                display_surf.blit(self.Resources[self.tiledMap[j][i]], (self.step * i, self.step * j))
+
+    def redraw(self, objPos):
+        """
+        Used if gameObject from the Scene is gonna change position.
+        Redraw override the last tiled map cells the gameObject was over in his last position.
+        :param objPos:
+        :return:
+        """
+        x = trunc(objPos[0] / self.step)
+        y = trunc(objPos[1] / self.step)
+        for pos in [(x,y), (x+1,y), (x,y+1), (x+1,y+1)]:
+            if pos[1] < len(self.tiledMap) and pos[0] < len(self.tiledMap[0]):
+                self.display_surf.blit(self.Resources[self.tiledMap[pos[1]][pos[0]]], (self.step * pos[0], self.step * pos[1]))

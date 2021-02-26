@@ -11,14 +11,11 @@ class App:
         self.size = self.weight, self.height = 800, 600
         self.clock = pygame.time.Clock()
 
-        # self.scene = GameScene(self.nextScene)
-
     def on_init(self):
         pygame.init()
         self._display_surf = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
         self._running = True
         self.clock.tick(30)  # set the frame rate to 30
-        print("work?")
         self.nextScene(GameScene(self.nextScene))
 
     def on_event(self, event):
@@ -50,6 +47,8 @@ class App:
     def nextScene(self, scene = None):
         self.scene = scene
         self.scene.drawTiledMap(self._display_surf)
+
+
 
 if __name__ == "__main__":
     theApp = App()

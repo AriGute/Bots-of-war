@@ -3,6 +3,8 @@ from GameObject.Tag import Tag
 from GameObject.Transform import Transform
 from GameObject.Point import Point
 
+
+
 class GameObject:
     # private static id for obj
     __staticId = 0;

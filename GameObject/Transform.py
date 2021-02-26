@@ -3,19 +3,19 @@ from GameObject.Point import Point
 class Transform:
 
     direction = {
-        "west": "WEST",
-        "east": "EAST",
-        "south": "SOUTH",
-        "north": "NORTH",
-        "nw": "NORTH WEST",
-        "ne": "NORTH EAST",
-        "se": "SOUTH EAST",
-        "sw": "SOUTH WEST"
+        "west": (-1, 0),
+        "east": (1, 0),
+        "south": (0, 1),
+        "north": (0, -1),
+        "nw": (-1, -1),
+        "ne": (1, -1),
+        "se": (1, 1),
+        "sw": (-1, 1)
     }
 
     def __init__(self):
         self._position = Point()
-        self.direction = Transform.direction["north"]
+        self.direction = "north"
 
     def changeDir(self, direction):
         self.direction = Transform.direction[direction]
@@ -29,3 +29,6 @@ class Transform:
         :return: nothing
         """
         self._position = Point(position)
+
+    def distance(self, point):
+        return self._position.distance(point)

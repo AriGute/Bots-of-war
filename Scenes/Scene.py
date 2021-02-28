@@ -6,10 +6,9 @@ Wen the Main loop is focusing on some scene then for each element in the gameObj
 the main loop should run the obj update function and drawing function.
 """
 class Scene:
-    def __init__(self, listener):
+    def __init__(self, nextSceneListener):
         self._gameObjectList = {}
-        self.nextScene = None
-        self.endSceneListener = listener
+        self.endSceneListener = nextSceneListener
         self.display_surf = None
         # Resources hold all the tiled map img or any other need to be "fast loaded" img.
         self.Resources = []
@@ -84,10 +83,11 @@ class Scene:
         """
         Draw Tilled map on the display surface once.
         """
-        self.display_surf = display_surf
-        for j in range(0, len(self.tiledMap)):
-            for i in range(0, len(self.tiledMap[0])):
-                display_surf.blit(self.Resources[self.tiledMap[j][i]], (self.step * i, self.step * j))
+        if self.tiledMap is not None:
+            self.display_surf = display_surf
+            for j in range(0, len(self.tiledMap)):
+                for i in range(0, len(self.tiledMap[0])):
+                    display_surf.blit(self.Resources[self.tiledMap[j][i]], (self.step * i, self.step * j))
 
     def redraw(self, objPos):
         """
@@ -96,23 +96,21 @@ class Scene:
         :param objPos:
         :return:
         """
-        x = trunc(objPos[0] / self.step)
-        y = trunc(objPos[1] / self.step)
-        # self.tiledMap[y][x] = 0
-        for pos in [(x,y), (x+1,y), (x,y+1), (x+1,y+1)]:
-            if pos[1] < len(self.tiledMap) and pos[0] < len(self.tiledMap[0]):
-                if self.tiledMap[pos[1]][pos[0]] < len(self.Resources):
-                    self.display_surf.blit(self.Resources[self.tiledMap[pos[1]][pos[0]]], (self.step * pos[0], self.step * pos[1]))
-                else:
-                    self.display_surf.blit(self.Resources[0], (self.step * pos[0], self.step * pos[1]))
+        if self.tiledMap is not None:
+            x = trunc(objPos[0] / self.step)
+            y = trunc(objPos[1] / self.step)
+            # self.tiledMap[y][x] = 0
+            for pos in [(x,y), (x+1,y), (x,y+1), (x+1,y+1)]:
+                if pos[1] < len(self.tiledMap) and pos[0] < len(self.tiledMap[0]):
+                    if self.tiledMap[pos[1]][pos[0]] < len(self.Resources):
+                        self.display_surf.blit(self.Resources[self.tiledMap[pos[1]][pos[0]]], (self.step * pos[0], self.step * pos[1]))
+                    else:
+                        self.display_surf.blit(self.Resources[0], (self.step * pos[0], self.step * pos[1]))
 
 
     def takeSnapShot(self):
         snapshot = self.tiledMap
-        #
-        # for gameObject in self._gameObjectList.values():
-        #     objPos = gameObject.transform.get_position()
-        #     x = trunc(objPos[0] / self.step)
-        #     y = trunc(objPos[1] / self.step)
-        #     snapshot[x][y] = 2
         return snapshot
+
+    def nextScene(self, scene):
+        self.endSceneListener(scene)

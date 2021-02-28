@@ -1,5 +1,6 @@
 import pygame
 from Scenes.GameScene import GameScene
+from Scenes.MainMenuScene import MenuScene
 
 # for any explnation for the code -> http://pygametutorials.wikidot.com/tutorials-basic
 
@@ -16,7 +17,7 @@ class App:
         self._display_surf = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
         self._running = True
         self.clock.tick(30)  # set the frame rate to 30
-        self.nextScene(GameScene(self.nextScene))
+        self.nextScene(MenuScene(self.nextScene))
 
     def on_event(self, event):
         self.scene.eventListener(event)

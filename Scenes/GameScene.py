@@ -29,9 +29,10 @@ class GameScene(Scene):
 
     def eventListener(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
-           # for i in self.takeSnapShot():
-           #     print(i)
-           self.nextScene(ExmpleScene(self.endSceneListener))
+           for i in self.takeSnapShot():
+               print(i)
+           print("\n")
+           # self.nextScene(ExmpleScene(self.endSceneListener))
 
 
         if event.type == pygame.KEYDOWN:

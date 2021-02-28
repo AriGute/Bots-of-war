@@ -42,6 +42,7 @@ class Robot(GameObject):
             pos = self.transform.get_position()
             dir = Transform.direction.get(direciton)
             self.nextStep = (pos[0]+dir[0]*step, pos[1]+dir[1]*step)
+            return self.nextStep
             # print("pos: "+str(pos)+", dir: "+str(dir)+", nextStep: "+str(self.nextStep))
 
     def _getRotate(self, originDir, targetDir):

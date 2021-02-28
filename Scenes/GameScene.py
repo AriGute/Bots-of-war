@@ -3,10 +3,11 @@ from math import trunc
 
 from Scenes.Scene import Scene
 from Objects.Robot import Robot
+from Scenes.ExempleScene import ExmpleScene
 
 class GameScene(Scene):
-    def __init__(self, listener):
-        Scene.__init__(self, listener)
+    def __init__(self, nextSceneListener):
+        Scene.__init__(self, nextSceneListener)
         self.step = 50;
         self.display_surf = None
         self.Resources.append(pygame.image.load("Resources/ground_mud.png"))
@@ -28,8 +29,10 @@ class GameScene(Scene):
 
     def eventListener(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
-           for i in self.takeSnapShot():
-               print(i)
+           # for i in self.takeSnapShot():
+           #     print(i)
+           self.nextScene(ExmpleScene(self.endSceneListener))
+
 
         if event.type == pygame.KEYDOWN:
             if self.getGameObj("Robot").walking != True:

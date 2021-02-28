@@ -49,7 +49,6 @@ class App:
         self.scene.drawTiledMap(self._display_surf)
 
 
-
 if __name__ == "__main__":
     theApp = App()
     theApp.on_execute()

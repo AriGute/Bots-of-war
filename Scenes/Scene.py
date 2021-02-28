@@ -92,12 +92,27 @@ class Scene:
     def redraw(self, objPos):
         """
         Used if gameObject from the Scene is gonna change position.
-        Redraw override the last tiled map cells the gameObject was over in his last position.
+        Redraw override the last tiled map cells the gameObject was over in his previous position.
         :param objPos:
         :return:
         """
         x = trunc(objPos[0] / self.step)
         y = trunc(objPos[1] / self.step)
+        # self.tiledMap[y][x] = 0
         for pos in [(x,y), (x+1,y), (x,y+1), (x+1,y+1)]:
             if pos[1] < len(self.tiledMap) and pos[0] < len(self.tiledMap[0]):
-                self.display_surf.blit(self.Resources[self.tiledMap[pos[1]][pos[0]]], (self.step * pos[0], self.step * pos[1]))
+                if self.tiledMap[pos[1]][pos[0]] < len(self.Resources):
+                    self.display_surf.blit(self.Resources[self.tiledMap[pos[1]][pos[0]]], (self.step * pos[0], self.step * pos[1]))
+                else:
+                    self.display_surf.blit(self.Resources[0], (self.step * pos[0], self.step * pos[1]))
+
+
+    def takeSnapShot(self):
+        snapshot = self.tiledMap
+        #
+        # for gameObject in self._gameObjectList.values():
+        #     objPos = gameObject.transform.get_position()
+        #     x = trunc(objPos[0] / self.step)
+        #     y = trunc(objPos[1] / self.step)
+        #     snapshot[x][y] = 2
+        return snapshot

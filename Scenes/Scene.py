@@ -17,6 +17,8 @@ class Scene:
         # tiledMpa is a matrix n on m that each matrix cell represent pixels group(img with size step x step).
         self.tiledMap = None
 
+        self.size = self.weight, self.height = 800, 600
+
     def eventListener(self, event):
         """
         Handle all the functionality for relevent pygame event.
@@ -30,7 +32,7 @@ class Scene:
         Every frame call the update method of every gameObject of this Scene.
         """
         self.update(deltaTime)
-        for obj in self._gameObjectList.values():
+        for obj in self._gameObjectList.copy().values():
             obj.update(deltaTime)
             self.redraw(obj.transform.get_position())
 
@@ -118,14 +120,33 @@ class Scene:
     def nextScene(self, scene):
         self.endSceneListener(scene)
 
-    def rePosObj(self, oldPos, newPos):
-        print("work?")
-        # newPos = robotNextPos
-        # oldPos = self.getGameObj("Robot").transform.get_position()
+    # TODO: check collision in the tiled map(for example: projectile hit wall).
+    def rePosObj(self, oldPos, newPos, id):
         if newPos is not None and oldPos is not None:
             x1 = trunc(newPos[0] / self.step)
             y1 = trunc(newPos[1] / self.step)
             x2 = trunc(oldPos[0] / self.step)
             y2 = trunc(oldPos[1] / self.step)
+
+            if x1 < 0 or x1 >= self.weight/self.step or y1 < 0 or y1 >= self.height/self.step:
+                key = self.getObjKey(id)
+                self.removeObj(key, x2, y2)
+                return
+
+            if self.tiledMap[y1][x1] == 1:
+                key = self.getObjKey(id)
+                self.removeObj(key, x2, y2)
+                return
+
             self.tiledMap[y1][x1] = 2
             self.tiledMap[y2][x2] = 0
+
+    def getObjKey(self, id):
+        for i in range(len(self._gameObjectList)):
+            key = list(self._gameObjectList.keys())[i]
+            if self.getGameObj(key).id == id:
+                return key
+
+    def removeObj(self, key, x, y):
+        self._gameObjectList.pop(key)
+        self.tiledMap[y][x] = 0

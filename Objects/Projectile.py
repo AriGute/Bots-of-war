@@ -2,6 +2,7 @@ import pygame
 from GameObject.GameObject import GameObject
 from GameObject.Transform import Transform
 
+# TODO: projectile destroyed if out of screen bounds
 class Projectile(GameObject):
 
     def __init__(self, position):

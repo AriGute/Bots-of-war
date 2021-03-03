@@ -10,6 +10,7 @@ class GameObject:
     deltaTime = None
 
     def __init__(self, name='unnamed', position=(0, 0)):
+        self.id = self.__GenerateId()
         self.name = name
         self.funcRefDict = {}
         self.tag = Tag()
@@ -69,7 +70,7 @@ class GameObject:
             pos = self.transform.get_position()
             dir = Transform.direction.get(direciton)
             self.nextStep = (pos[0] + dir[0] * self.step, pos[1] + dir[1] * self.step)
-            self.funcRefDict['rePos'](pos, self.nextStep)
+            self.funcRefDict['rePos'](pos, self.nextStep, self.id)
             return self.nextStep
 
     def _getRotate(self, originDir, targetDir):

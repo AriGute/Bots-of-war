@@ -78,7 +78,6 @@ class GameObject:
         originalAngle = dirDict[originDir]
         targetAngle = dirDict[targetDir]
         angle = 0
-        print("origin dir: {od}, target dir : {td}".format(od=originDir, td=targetDir))
         while (originalAngle + angle) % 360 != targetAngle:
             angle += 90
         return angle

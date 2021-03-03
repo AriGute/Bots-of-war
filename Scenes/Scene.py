@@ -120,7 +120,7 @@ class Scene:
     def nextScene(self, scene):
         self.endSceneListener(scene)
 
-    # TODO: check collision in the tiled map(for example: projectile hit wall).
+    # TODO: set position on tiledmap based on type or Tag
     def rePosObj(self, oldPos, newPos, id):
         if newPos is not None and oldPos is not None:
             x1 = trunc(newPos[0] / self.step)
@@ -142,11 +142,25 @@ class Scene:
             self.tiledMap[y2][x2] = 0
 
     def getObjKey(self, id):
+        """
+        Return the key for the giving object id.
+        gameObjectList with this key will give object with the same id.
+        if cant find any gameObject with same id then return None.
+        :param id: existing gameObjct id.
+        :return: dictionary key for that gameObject.
+        """
         for i in range(len(self._gameObjectList)):
             key = list(self._gameObjectList.keys())[i]
             if self.getGameObj(key).id == id:
                 return key
+        return None
 
     def removeObj(self, key, x, y):
+        """
+        Remove gameObject from gameObjectList dictionary and remove it from the tiledmap.
+        :param key: game object key in the gameObjList.
+        :param x: row index in the tiledmap.
+        :param y: column index in th etiledmap.
+        """
         self._gameObjectList.pop(key)
         self.tiledMap[y][x] = 0

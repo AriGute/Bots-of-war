@@ -50,8 +50,9 @@ class GameScene(Scene):
                     robotNextPos = robot.move("south")
                 elif event.key == pygame.K_SPACE:
                     Projectile = self.getGameObj("Robot").fire()
-                    self.addGamObj("Projectile", Projectile)
-                    Projectile.move(robot.transform.direction)
+                    if Projectile is not None:
+                        self.addGamObj("Projectile", Projectile)
+                        Projectile.move(robot.transform.direction)
 
 
 

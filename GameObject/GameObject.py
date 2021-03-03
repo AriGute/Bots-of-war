@@ -33,7 +33,7 @@ class GameObject:
         and should handle all the logic of an object.
         """
         if (self.Moving == True):
-            if (self.transform.distance(point=Point((self.nextStep[0], self.nextStep[1]))) > 1):
+            if (self.transform.distance(point=Point((self.nextStep[0], self.nextStep[1]))) > 5):
                 pos = self.transform.get_position()
                 if pos[0] > self.nextStep[0]:
                     self.transform.set_position((pos[0] - self.speed * deltaTime, pos[1]))

@@ -9,16 +9,21 @@ class Robot(GameObject):
         GameObject.__init__(self,"Robot", position)
         self.img = pygame.image.load("Resources/roboTest.png")
         self.transform.set_position(position)
-        self.speed = 5
+        self.speed = 10
+        self.fireRate = 3
+        self.fireTimer = 0
         self.nextStep = None
 
 
     def update(self, deltaTime):
         super().update(deltaTime)
+        if self.fireTimer > 0:
+            self.fireTimer -= deltaTime
 
     def fire(self):
-        print("Fire!")
-        print(self.transform.get_position())
+        if self.fireTimer > 0:
+            return None
+        self.fireTimer = self.fireRate
         return Projectile(self.transform.get_position())
 
 

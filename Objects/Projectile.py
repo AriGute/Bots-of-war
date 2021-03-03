@@ -8,7 +8,7 @@ class Projectile(GameObject):
     def __init__(self, position):
         GameObject.__init__(self,"ExampleObj", position)
         self.img = pygame.image.load("Resources/projectile.png")
-        self.speed = 5
+        self.speed = 30
 
     def update(self, deltaTime):
         super().update(deltaTime)

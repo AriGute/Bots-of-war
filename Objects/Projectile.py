@@ -10,9 +10,8 @@ class Projectile(GameObject):
         self.speed = 5
 
     def update(self, deltaTime):
-        # TODO: find a way to do static delta time to all GameObjects
-        pos = self.transform.get_position()
-        dir = Transform.direction[self.transform.direction]
-        nextPos = (pos[0] + dir[0]*deltaTime*self.speed, pos[1] + dir[1]*deltaTime*self.speed)
-        self.transform.set_position(nextPos)
+        super().update(deltaTime)
+        if self.Moving is False:
+            self.move(self.transform.direction)
+
 

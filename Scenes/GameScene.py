@@ -36,36 +36,25 @@ class GameScene(Scene):
 
 
         if event.type == pygame.KEYDOWN:
-            if self.getGameObj("Robot").walking != True:
+            if self.getGameObj("Robot").Moving != True:
+                robot = self.getGameObj("Robot")
                 robotNextPos = None
                 Projectile = None
                 if event.key == pygame.K_LEFT:
-                    robotNextPos = self.getGameObj("Robot").move("west", self.step)
+                    robotNextPos = robot.move("west")
                 elif event.key == pygame.K_RIGHT:
-                    robotNextPos = self.getGameObj("Robot").move("east", self.step)
+                    robotNextPos = robot.move("east")
                 elif event.key == pygame.K_UP:
-                    robotNextPos = self.getGameObj("Robot").move("north", self.step)
+                    robotNextPos = robot.move("north")
                 elif event.key == pygame.K_DOWN:
-                    robotNextPos = self.getGameObj("Robot").move("south", self.step)
+                    robotNextPos = robot.move("south")
                 elif event.key == pygame.K_SPACE:
                     Projectile = self.getGameObj("Robot").fire()
                     self.addGamObj("Projectile", Projectile)
+                    Projectile.move(robot.transform.direction)
 
-                # newPos = robotNextPos
-                # oldPos = self.getGameObj("Robot").transform.get_position()
-                # if newPos is not None and oldPos is not None:
-                #     x1 = trunc(newPos[0] / self.step)
-                #     y1 = trunc(newPos[1] / self.step)
-                #     x2 = trunc(oldPos[0] / self.step)
-                #     y2 = trunc(oldPos[1] / self.step)
-                #     self.tiledMap[y1][x1] = 2
-                #     self.tiledMap[y2][x2] = 0
 
 
 
     def update(self, deltaTime):
         pass
-
-
-    def addFunction(self, key, val):
-        self.extraFunctions[key] = val

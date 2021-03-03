@@ -71,7 +71,9 @@ class Scene:
             else:
                 # if the key don't have any digit at the end then add one to make the key unique.
                 key += " 1"
+        obj.addFunctionRef('rePos', self.rePosObj)
         self._gameObjectList[key] = obj
+
 
     def getGameObj(self, k):
         """
@@ -117,6 +119,7 @@ class Scene:
         self.endSceneListener(scene)
 
     def rePosObj(self, oldPos, newPos):
+        print("work?")
         # newPos = robotNextPos
         # oldPos = self.getGameObj("Robot").transform.get_position()
         if newPos is not None and oldPos is not None:

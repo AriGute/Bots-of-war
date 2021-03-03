@@ -13,8 +13,8 @@ class Transform:
         "sw": (-1, 1)
     }
 
-    def __init__(self):
-        self._position = Point()
+    def __init__(self, position=(0, 0)):
+        self._position = Point(position)
         self.direction = "north"
 
     def changeDir(self, direction):

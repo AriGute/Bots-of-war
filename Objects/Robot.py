@@ -2,6 +2,8 @@ import pygame
 from GameObject.GameObject import GameObject
 from GameObject.Transform import Transform
 from GameObject.Point import Point
+from Objects.Projectile import Projectile
+
 
 class Robot(GameObject):
     def __init__(self, position):
@@ -13,10 +15,9 @@ class Robot(GameObject):
         self.nextStep = None
 
 
-    def update(self):
+    def update(self, deltaTime):
         if(self.walking == True):
             if(self.transform.distance(point=Point((self.nextStep[0], self.nextStep[1])))>1):
-                deltaTime = pygame.time.Clock().tick(30)/100
                 pos = self.transform.get_position()
                 if pos[0] > self.nextStep[0]:
                     self.transform.set_position((pos[0]-self.speed*deltaTime, pos[1]))
@@ -43,14 +44,18 @@ class Robot(GameObject):
             dir = Transform.direction.get(direciton)
             self.nextStep = (pos[0]+dir[0]*step, pos[1]+dir[1]*step)
             return self.nextStep
-            # print("pos: "+str(pos)+", dir: "+str(dir)+", nextStep: "+str(self.nextStep))
+
+    def fire(self):
+        print("Fire!")
+        print(self.transform.get_position())
+        return Projectile(self.transform.get_position())
 
     def _getRotate(self, originDir, targetDir):
         dirDict = {"north": 90, "south":270, "east":0, "west":180}
         originalAngle = dirDict[originDir]
         targetAngle = dirDict[targetDir]
         angle = 0
-        print("origin dir: {od}, target dir : {td}".format(od = originDir, td = targetDir))
+        print("origin dir: {od}, target dir : {td}".format(od=originDir, td=targetDir))
         while (originalAngle+angle) % 360 != targetAngle:
             angle += 90
         return angle

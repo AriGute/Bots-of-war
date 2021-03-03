@@ -1,19 +1,17 @@
-from pygame import surface
 from GameObject.Tag import Tag
 from GameObject.Transform import Transform
-from GameObject.Point import Point
-
+import pygame
 
 
 class GameObject:
     # private static id for obj
     __staticId = 0;
+    deltaTime = None
 
     def __init__(self, name='unnamed', position=(0, 0)):
-        self.id = self.__GenerateId()
         self.name = name
         self.tag = Tag()
-        self.transform = Transform()
+        self.transform = Transform(position)
         self.img = None
 
     def __GenerateId(self):
@@ -24,7 +22,7 @@ class GameObject:
         GameObject.__staticId += 1
         return GameObject.__staticId-1
 
-    def update(self):
+    def update(self, deltaTime):
         """
         this method run every frame
         and should handle all the logic of an object.

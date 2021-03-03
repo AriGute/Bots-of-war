@@ -25,16 +25,16 @@ class Scene:
         """
         raise NotImplementedError
 
-    def runScene(self):
+    def runScene(self, deltaTime):
         """
         Every frame call the update method of every gameObject of this Scene.
         """
-        self.update()
+        self.update(deltaTime)
         for obj in self._gameObjectList.values():
-            obj.update()
+            obj.update(deltaTime)
             self.redraw(obj.transform.get_position())
 
-    def update(self):
+    def update(self, deltaTime):
         raise NotImplementedError
 
     def drawScene(self, display_surf):
@@ -43,6 +43,7 @@ class Scene:
         """
         for obj in self._gameObjectList.values():
             obj.draw(display_surf)
+
 
     def endScene(self):
         """
@@ -114,3 +115,14 @@ class Scene:
 
     def nextScene(self, scene):
         self.endSceneListener(scene)
+
+    def rePosObj(self, oldPos, newPos):
+        # newPos = robotNextPos
+        # oldPos = self.getGameObj("Robot").transform.get_position()
+        if newPos is not None and oldPos is not None:
+            x1 = trunc(newPos[0] / self.step)
+            y1 = trunc(newPos[1] / self.step)
+            x2 = trunc(oldPos[0] / self.step)
+            y2 = trunc(oldPos[1] / self.step)
+            self.tiledMap[y1][x1] = 2
+            self.tiledMap[y2][x2] = 0

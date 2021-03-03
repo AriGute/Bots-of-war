@@ -17,6 +17,8 @@ class Scene:
         # tiledMpa is a matrix n on m that each matrix cell represent pixels group(img with size step x step).
         self.tiledMap = None
 
+        self.size = self.weight, self.height = 800, 600
+
     def eventListener(self, event):
         """
         Handle all the functionality for relevent pygame event.
@@ -25,16 +27,16 @@ class Scene:
         """
         raise NotImplementedError
 
-    def runScene(self):
+    def runScene(self, deltaTime):
         """
         Every frame call the update method of every gameObject of this Scene.
         """
-        self.update()
-        for obj in self._gameObjectList.values():
-            obj.update()
+        self.update(deltaTime)
+        for obj in self._gameObjectList.copy().values():
+            obj.update(deltaTime)
             self.redraw(obj.transform.get_position())
 
-    def update(self):
+    def update(self, deltaTime):
         raise NotImplementedError
 
     def drawScene(self, display_surf):
@@ -43,6 +45,7 @@ class Scene:
         """
         for obj in self._gameObjectList.values():
             obj.draw(display_surf)
+
 
     def endScene(self):
         """
@@ -70,7 +73,9 @@ class Scene:
             else:
                 # if the key don't have any digit at the end then add one to make the key unique.
                 key += " 1"
+        obj.addFunctionRef('rePos', self.rePosObj)
         self._gameObjectList[key] = obj
+
 
     def getGameObj(self, k):
         """
@@ -114,3 +119,48 @@ class Scene:
 
     def nextScene(self, scene):
         self.endSceneListener(scene)
+
+    # TODO: set position on tiledmap based on type or Tag
+    def rePosObj(self, oldPos, newPos, id):
+        if newPos is not None and oldPos is not None:
+            x1 = trunc(newPos[0] / self.step)
+            y1 = trunc(newPos[1] / self.step)
+            x2 = trunc(oldPos[0] / self.step)
+            y2 = trunc(oldPos[1] / self.step)
+
+            if x1 < 0 or x1 >= self.weight/self.step or y1 < 0 or y1 >= self.height/self.step:
+                key = self.getObjKey(id)
+                self.removeObj(key, x2, y2)
+                return
+
+            if self.tiledMap[y1][x1] == 1:
+                key = self.getObjKey(id)
+                self.removeObj(key, x2, y2)
+                return
+
+            self.tiledMap[y1][x1] = 2
+            self.tiledMap[y2][x2] = 0
+
+    def getObjKey(self, id):
+        """
+        Return the key for the giving object id.
+        gameObjectList with this key will give object with the same id.
+        if cant find any gameObject with same id then return None.
+        :param id: existing gameObjct id.
+        :return: dictionary key for that gameObject.
+        """
+        for i in range(len(self._gameObjectList)):
+            key = list(self._gameObjectList.keys())[i]
+            if self.getGameObj(key).id == id:
+                return key
+        return None
+
+    def removeObj(self, key, x, y):
+        """
+        Remove gameObject from gameObjectList dictionary and remove it from the tiledmap.
+        :param key: game object key in the gameObjList.
+        :param x: row index in the tiledmap.
+        :param y: column index in th etiledmap.
+        """
+        self._gameObjectList.pop(key)
+        self.tiledMap[y][x] = 0

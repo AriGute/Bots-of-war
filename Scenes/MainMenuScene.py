@@ -84,6 +84,6 @@ class MenuScene(Scene):
         title = self.textFont.render(MenuScene.title, True, MenuScene.colorBlack)
         self.display_surf.blit(title, (self.width / 4 + 50, self.height - 475))
 
-    def update(self):
+    def update(self, deltaTime):
         pass
 

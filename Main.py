@@ -1,5 +1,4 @@
 import pygame
-from Scenes.GameScene import GameScene
 from Scenes.MainMenuScene import MenuScene
 
 # for any explnation for the code -> http://pygametutorials.wikidot.com/tutorials-basic
@@ -11,13 +10,15 @@ class App:
         self._display_surf = None
         self.size = self.weight, self.height = 800, 600
         self.clock = pygame.time.Clock()
+        self.fps = 30
+        self.deltaTime = 0
 
     def on_init(self):
         pygame.init()
         self._display_surf = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
         self._running = True
-        self.clock.tick(30)  # set the frame rate to 30
         self.nextScene(MenuScene(self.nextScene))
+        self.deltaTime = pygame.time.Clock().tick(30)/100
 
     def on_event(self, event):
         self.scene.eventListener(event)
@@ -25,9 +26,11 @@ class App:
             self._running = False
 
     def on_loop(self):
-        self.scene.runScene()
+        self.deltaTime = pygame.time.Clock().tick(30)/100
+        self.scene.runScene(self.deltaTime)
 
     def on_render(self):
+        self.clock.tick(self.fps)  # set the frame rate to 30
         self.scene.drawScene(self._display_surf)
         pygame.display.update()
 

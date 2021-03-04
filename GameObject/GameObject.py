@@ -70,7 +70,7 @@ class GameObject:
             pos = self.transform.get_position()
             dir = Transform.direction.get(direciton)
             self.nextStep = (pos[0] + dir[0] * self.step, pos[1] + dir[1] * self.step)
-            self.funcRefDict['rePos'](pos, self.nextStep, self.id)
+            self.funcRefDict['rePos'](pos, self.nextStep, self.id, self.tag)
             return self.nextStep
 
     def _getRotate(self, originDir, targetDir):

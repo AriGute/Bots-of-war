@@ -1,8 +1,8 @@
 import pygame
 from Scenes.MainMenuScene import MenuScene
 
-# for any explnation for the code -> http://pygametutorials.wikidot.com/tutorials-basic
-
+# for any explanation for the code -> http://pygametutorials.wikidot.com/tutorials-basic
+# TODO: different kind of weapons for different kind of projectiles and stats.
 class App:
     def __init__(self):
         pygame.display.set_caption('Bots Of War')

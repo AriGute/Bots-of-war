@@ -31,4 +31,6 @@ class Robot(GameObject):
 
         return Projectile(projectilePosition)
 
+    def botAi(self, target):
+        nextMove = self.transform.get_position()
 

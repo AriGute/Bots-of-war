@@ -1,4 +1,5 @@
 from GameObject.Point import Point
+from math import trunc
 
 class Transform:
 
@@ -7,10 +8,6 @@ class Transform:
         "east": (1, 0),
         "south": (0, 1),
         "north": (0, -1),
-        "nw": (-1, -1),
-        "ne": (1, -1),
-        "se": (1, 1),
-        "sw": (-1, 1)
     }
 
     def __init__(self, position=(0, 0)):
@@ -22,6 +19,12 @@ class Transform:
 
     def get_position(self):
         return (self._position.x, self._position.y)
+
+    def get_gridPosition(self):
+        step = 50
+        pos = self.get_position()
+        gridPos = (trunc(pos[0]/step), trunc(pos[1]/step))
+        return gridPos
 
     def set_position(self, position):
         """

@@ -107,11 +107,13 @@ class Scene:
             # self.tiledMap[y][x] = 0
             for pos in [(x,y), (x+1,y), (x,y+1), (x+1,y+1)]:
                 if pos[1] < len(self.tiledMap) and pos[0] < len(self.tiledMap[0]):
-                    if self.tiledMap[pos[1]][pos[0]] < len(self.Resources):
-                        self.display_surf.blit(self.Resources[self.tiledMap[pos[1]][pos[0]]], (self.step * pos[0], self.step * pos[1]))
+                    if self.tiledMap[pos[1]][pos[0]] > 0:
+                        if self.tiledMap[pos[1]][pos[0]] < len(self.Resources):
+                            self.display_surf.blit(self.Resources[self.tiledMap[pos[1]][pos[0]]], (self.step * pos[0], self.step * pos[1]))
+                        else:
+                            self.display_surf.blit(self.Resources[0], (self.step * pos[0], self.step * pos[1]))
                     else:
                         self.display_surf.blit(self.Resources[0], (self.step * pos[0], self.step * pos[1]))
-
 
     def takeSnapShot(self):
         snapshot = self.tiledMap
@@ -121,7 +123,7 @@ class Scene:
         self.endSceneListener(scene)
 
     # TODO: set position on tiledmap based on type or Tag
-    def rePosObj(self, oldPos, newPos, id):
+    def rePosObj(self, oldPos, newPos, id, tag):
         if newPos is not None and oldPos is not None:
             x1 = trunc(newPos[0] / self.step)
             y1 = trunc(newPos[1] / self.step)
@@ -138,7 +140,13 @@ class Scene:
                 self.removeObj(key, x2, y2)
                 return
 
-            self.tiledMap[y1][x1] = 2
+            type = 0
+            if tag == 'Player':
+                type = 2
+            elif tag == 'Projectile':
+                type = -1
+
+            self.tiledMap[y1][x1] = type
             self.tiledMap[y2][x2] = 0
 
     def getObjKey(self, id):

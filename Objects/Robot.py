@@ -13,6 +13,7 @@ class Robot(GameObject):
         self.fireRate = 3
         self.fireTimer = 0
         self.nextStep = None
+        self.tag = 'Player'
 
 
     def update(self, deltaTime):
@@ -24,6 +25,10 @@ class Robot(GameObject):
         if self.fireTimer > 0:
             return None
         self.fireTimer = self.fireRate
-        return Projectile(self.transform.get_position())
+        pos = self.transform.get_position()
+        dir = Transform.direction.get(self.transform.direction)
+        projectilePosition = (pos[0] + dir[0] * self.step, pos[1] + dir[1] * self.step)
+
+        return Projectile(projectilePosition)
 
 

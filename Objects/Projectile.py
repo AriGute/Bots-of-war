@@ -8,6 +8,7 @@ class Projectile(GameObject):
         self.img = pygame.image.load("Resources/projectile.png")
         self.speed = 30
         self.tag = 'Projectile'
+        self.name = 'Projectile'
 
     def update(self, deltaTime):
         super().update(deltaTime)

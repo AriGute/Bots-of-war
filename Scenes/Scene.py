@@ -67,6 +67,7 @@ class Scene:
             if splitKey[-1].isdigit():
                 # if the key have digit in the and after space(someKey 1)
                 # then add +1 to the digit at the end
+                # TODO: change 'name 1' to 'name 1name 1' instead of 'name 2'(need to be fixed!).
                 for i in range(0, len(splitKey)-1):
                     key += splitKey[i] + " "
                 key += str(int(splitKey[-1])+1)
@@ -116,13 +117,15 @@ class Scene:
                         self.display_surf.blit(self.Resources[0], (self.step * pos[0], self.step * pos[1]))
 
     def takeSnapShot(self):
+        print()
         snapshot = self.tiledMap
+        for i in self._gameObjectList.values():
+            print(i.name)
         return snapshot
 
     def nextScene(self, scene):
         self.endSceneListener(scene)
 
-    # TODO: set position on tiledmap based on type or Tag
     def rePosObj(self, oldPos, newPos, id, tag):
         if newPos is not None and oldPos is not None:
             x1 = trunc(newPos[0] / self.step)
@@ -134,8 +137,13 @@ class Scene:
                 key = self.getObjKey(id)
                 self.removeObj(key, x2, y2)
                 return
-
             if self.tiledMap[y1][x1] == 1:
+                key = self.getObjKey(id)
+                pdb.set_trace()
+                self.removeObj(key, x2, y2)
+                return
+            if self.tiledMap[y1][x1] == 2:
+                pdb.set_trace()
                 key = self.getObjKey(id)
                 self.removeObj(key, x2, y2)
                 return
@@ -144,10 +152,27 @@ class Scene:
             if tag == 'Player':
                 type = 2
             elif tag == 'Projectile':
-                type = -1
+                # if Projectile spawned out of Robot then don't override the Robot from the tiledmap.
+                if self.tiledMap[y2][x2] == 2:
+                    return
+                else:
+                    type = -1
 
             self.tiledMap[y1][x1] = type
             self.tiledMap[y2][x2] = 0
+
+    def cellIsWalkAble(self, x, y):
+        """
+        Check if cell on the tiledmap is walkable(0 mean no obstacle).
+        :param x: number of pixels on the x axis
+        :param y:number of pixels on the y axis
+        :return: True if the cell is walkable(0 in the tiled map)
+        """
+        i = trunc(y/self.step)
+        j = trunc(x/self.step)
+        if self.tiledMap[i][j] == 0:
+            return True
+        return False
 
     def getObjKey(self, id):
         """
@@ -172,3 +197,15 @@ class Scene:
         """
         self._gameObjectList.pop(key)
         self.tiledMap[y][x] = 0
+
+    def printMap(self):
+        """
+        For debugging.
+        print tiled map and all objects that
+        are currently in the scene.
+        """
+        print()
+        for i in self._gameObjectList.values():
+            print(i.name)
+        for i in self.tiledMap:
+            print(i)

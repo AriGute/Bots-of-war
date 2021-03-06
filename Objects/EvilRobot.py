@@ -11,5 +11,5 @@ class EvilRobot(Robot):
 
     def update(self, deltaTime):
         super().update(deltaTime)
-        if self.reactionTime > 0:
+        if self.reactionTime >= 0:
             self.reactionTime -= deltaTime

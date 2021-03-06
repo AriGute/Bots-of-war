@@ -117,7 +117,10 @@ class Scene:
                         self.display_surf.blit(self.Resources[0], (self.step * pos[0], self.step * pos[1]))
 
     def takeSnapShot(self):
+        print()
         snapshot = self.tiledMap
+        for i in self._gameObjectList.values():
+            print(i.name)
         return snapshot
 
     def nextScene(self, scene):
@@ -136,9 +139,11 @@ class Scene:
                 return
             if self.tiledMap[y1][x1] == 1:
                 key = self.getObjKey(id)
+                pdb.set_trace()
                 self.removeObj(key, x2, y2)
                 return
             if self.tiledMap[y1][x1] == 2:
+                pdb.set_trace()
                 key = self.getObjKey(id)
                 self.removeObj(key, x2, y2)
                 return
@@ -192,3 +197,15 @@ class Scene:
         """
         self._gameObjectList.pop(key)
         self.tiledMap[y][x] = 0
+
+    def printMap(self):
+        """
+        For debugging.
+        print tiled map and all objects that
+        are currently in the scene.
+        """
+        print()
+        for i in self._gameObjectList.values():
+            print(i.name)
+        for i in self.tiledMap:
+            print(i)

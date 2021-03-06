@@ -8,6 +8,8 @@ from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
 from GameObject.Point import Point
 
+# TODO: investigate bug that happen if EvilRobot walk near
+#  eadge of the screen then he stop moving.
 # TODO: create function that clear the memory properly.
 class GameScene(Scene):
 
@@ -31,8 +33,8 @@ class GameScene(Scene):
                          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                          [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
-        self.addGamObj("Robot", Robot((200, 400)))
-        self.addGamObj("EvilRobot", EvilRobot((600, 100)))
+        self.addGamObj("Robot", Robot((50, 500)))
+        self.addGamObj("EvilRobot", EvilRobot((50, 0)))
 
         self.player = self.getGameObj("Robot")
         self.evilRobot = self.getGameObj("EvilRobot")
@@ -71,11 +73,28 @@ class GameScene(Scene):
 
 
     def update(self, deltaTime):
-        pass
         self.evilRoborAi()
 
     def evilRoborAi(self):
+        """
+        EvilRobot Ai.
+        calc the EvilRobot next move
+        or fire action.
+        """
+        # if Evil robot shoot after moving then its create a bug that
+        # make the Projectile think that its over a Robot(tiledMap[][] == 2)
+        # and destroying the Projectile.
+        if self.evilRobot.fireTimer <= 0:
+            # Evil robot try to shoot.
+            targetPos = self.player.transform.get_gridPosition()
+            myGridPos = self.evilRobot.transform.get_gridPosition()
+            if targetPos[0] == myGridPos[0] or targetPos[1] == myGridPos[1]:
+                Projectile = self.evilRobot.fire()
+                if Projectile is not None:
+                    self.addGamObj("Projectile", Projectile)
+                    Projectile.move(self.evilRobot.transform.direction)
         if self.evilRobot.reactionTime <= 0:
+            # Evil robot try to move.
             targetPos = self.player.transform.get_position()
             if self.evilRobot.transform.distance(Point(targetPos)) > self.step:
                 startPos = self.getGameObj("EvilRobot").transform.get_gridPosition()
@@ -83,19 +102,7 @@ class GameScene(Scene):
                 self.evilRobot.reactionTime = self.evilRobot.reactionRate
                 self.evilRobot.move(self.pathFinding(startPos, targetPos))
 
-        if self.evilRobot.fireTimer <= 0:
-            targetPos = self.player.transform.get_gridPosition()
-            myGridPos = self.evilRobot.transform.get_gridPosition()
-            if targetPos[0] == myGridPos[0]:
-                Projectile = self.evilRobot.fire()
-                if Projectile is not None:
-                    self.addGamObj("Projectile", Projectile)
-                    Projectile.move(self.evilRobot.transform.direction)
-            if targetPos[1] == myGridPos[1]:
-                Projectile = self.evilRobot.fire()
-                if Projectile is not None:
-                    self.addGamObj("Projectile", Projectile)
-                    Projectile.move(self.evilRobot.transform.direction)
+
 
     def pathFinding(self, start, target):
         """

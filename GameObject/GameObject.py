@@ -3,7 +3,6 @@ from GameObject.Transform import Transform
 import pygame
 from GameObject.Point import Point
 
-
 class GameObject:
     # private static id for obj
     __staticId = 0;

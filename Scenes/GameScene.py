@@ -8,13 +8,13 @@ from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
 from GameObject.Point import Point
 
-# TODO: Player cant move over walls or out of game boundaries
 # TODO: create function that clear the memory properly.
 class GameScene(Scene):
 
     def __init__(self, nextSceneListener):
         Scene.__init__(self, nextSceneListener)
         self.step = 50;
+        self.w, h = pygame.display.get_surface().get_size()
         self.display_surf = None
         self.Resources.append(pygame.image.load("Resources/ground_mud.png"))
         self.Resources.append(pygame.image.load("Resources/wall.png"))
@@ -64,10 +64,14 @@ class GameScene(Scene):
                         Projectile.move(robot.transform.direction)
 
                 if direction is not None:
-                    robotNextPos = robot.move(direction)
+                    nextPos = self.player.transform.calcNextPos(direction)
+                    if self.cellIsWalkAble(nextPos[0], nextPos[1]):
+                        if self.player.transform.inBounds(nextPos):
+                            robot.move(direction)
 
 
     def update(self, deltaTime):
+        pass
         self.evilRoborAi()
 
     def evilRoborAi(self):

@@ -7,7 +7,6 @@ pygame - 2.0.0
 pathfinding - 1.0.1 
 """
 
-
 # For any explanation for the code -> http://pygametutorials.wikidot.com/tutorials-basic
 # TODO: different kind of weapons for different kind of projectiles and stats.
 class App:

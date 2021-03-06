@@ -156,6 +156,19 @@ class Scene:
             self.tiledMap[y1][x1] = type
             self.tiledMap[y2][x2] = 0
 
+    def cellIsWalkAble(self, x, y):
+        """
+        Check if cell on the tiledmap is walkable(0 mean no obstacle).
+        :param x: number of pixels on the x axis
+        :param y:number of pixels on the y axis
+        :return: True if the cell is walkable(0 in the tiled map)
+        """
+        i = trunc(y/self.step)
+        j = trunc(x/self.step)
+        if self.tiledMap[i][j] == 0:
+            return True
+        return False
+
     def getObjKey(self, id):
         """
         Return the key for the giving object id.

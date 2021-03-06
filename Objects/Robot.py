@@ -14,6 +14,7 @@ class Robot(GameObject):
         self.fireTimer = 0
         self.nextStep = None
         self.tag = 'Player'
+        self.w, h = pygame.display.get_surface().get_size()
 
 
     def update(self, deltaTime):
@@ -22,8 +23,6 @@ class Robot(GameObject):
             self.fireTimer -= deltaTime
 
     def fire(self):
-        w, h = pygame.display.get_surface().get_size()
-
         if self.fireTimer > 0:
             return None
         self.fireTimer = self.fireRate
@@ -31,7 +30,7 @@ class Robot(GameObject):
         dir = Transform.direction.get(self.transform.direction)
         spawnPos = (pos[0] + dir[0] * self.step, pos[1] + dir[1] * self.step)
         # Check if projectile try to spawn out of screen bounds
-        if spawnPos[0] < 0 or spawnPos[0] >= w or spawnPos[1] < 0 or spawnPos[1] >= h:
+        if spawnPos[0] < 0 or spawnPos[0] >= Transform.w or spawnPos[1] < 0 or spawnPos[1] >= Transform.h:
             return None
         return Projectile(pos)
 

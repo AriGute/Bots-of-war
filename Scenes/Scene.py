@@ -67,6 +67,7 @@ class Scene:
             if splitKey[-1].isdigit():
                 # if the key have digit in the and after space(someKey 1)
                 # then add +1 to the digit at the end
+                # TODO: change 'name 1' to 'name 1name 1' instead of 'name 2'(need to be fixed!).
                 for i in range(0, len(splitKey)-1):
                     key += splitKey[i] + " "
                 key += str(int(splitKey[-1])+1)
@@ -122,7 +123,6 @@ class Scene:
     def nextScene(self, scene):
         self.endSceneListener(scene)
 
-    # TODO: set position on tiledmap based on type or Tag
     def rePosObj(self, oldPos, newPos, id, tag):
         if newPos is not None and oldPos is not None:
             x1 = trunc(newPos[0] / self.step)
@@ -134,8 +134,11 @@ class Scene:
                 key = self.getObjKey(id)
                 self.removeObj(key, x2, y2)
                 return
-
             if self.tiledMap[y1][x1] == 1:
+                key = self.getObjKey(id)
+                self.removeObj(key, x2, y2)
+                return
+            if self.tiledMap[y1][x1] == 2:
                 key = self.getObjKey(id)
                 self.removeObj(key, x2, y2)
                 return
@@ -144,7 +147,11 @@ class Scene:
             if tag == 'Player':
                 type = 2
             elif tag == 'Projectile':
-                type = -1
+                # if Projectile spawned out of Robot then don't override the Robot from the tiledmap.
+                if self.tiledMap[y2][x2] == 2:
+                    return
+                else:
+                    type = -1
 
             self.tiledMap[y1][x1] = type
             self.tiledMap[y2][x2] = 0

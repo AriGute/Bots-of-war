@@ -8,6 +8,7 @@ from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
 from GameObject.Point import Point
 
+# TODO: Player cant move over walls or out of game boundaries
 # TODO: create function that clear the memory properly.
 class GameScene(Scene):
 
@@ -38,43 +39,59 @@ class GameScene(Scene):
 
     def eventListener(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
-           # for i in self.takeSnapShot():
-           #     print(i)
+           for i in self.takeSnapShot():
+               print(i)
            print("\n")
-
 
         if event.type == pygame.KEYDOWN:
             if self.player.Moving != True:
                 robot = self.player
                 robotNextPos = None
                 Projectile = None
+                direction = None
                 if event.key == pygame.K_LEFT:
-                    robotNextPos = robot.move("west")
+                    direction = 'west'
                 elif event.key == pygame.K_RIGHT:
-                    robotNextPos = robot.move("east")
+                    direction = 'east'
                 elif event.key == pygame.K_UP:
-                    robotNextPos = robot.move("north")
+                    direction = 'north'
                 elif event.key == pygame.K_DOWN:
-                    robotNextPos = robot.move("south")
+                    direction = 'south'
                 elif event.key == pygame.K_SPACE:
-                    Projectile = self.getGameObj("Robot").fire()
+                    Projectile = robot.fire()
                     if Projectile is not None:
                         self.addGamObj("Projectile", Projectile)
                         Projectile.move(robot.transform.direction)
 
-
+                if direction is not None:
+                    robotNextPos = robot.move(direction)
 
 
     def update(self, deltaTime):
-        print(self.evilRobot.reactionTime )
+        self.evilRoborAi()
+
+    def evilRoborAi(self):
         if self.evilRobot.reactionTime <= 0:
             targetPos = self.player.transform.get_position()
-            if self.evilRobot.transform.distance(Point(targetPos)) > 50:
+            if self.evilRobot.transform.distance(Point(targetPos)) > self.step:
                 startPos = self.getGameObj("EvilRobot").transform.get_gridPosition()
                 targetPos = self.getGameObj("Robot").transform.get_gridPosition()
                 self.evilRobot.reactionTime = self.evilRobot.reactionRate
                 self.evilRobot.move(self.pathFinding(startPos, targetPos))
 
+        if self.evilRobot.fireTimer <= 0:
+            targetPos = self.player.transform.get_gridPosition()
+            myGridPos = self.evilRobot.transform.get_gridPosition()
+            if targetPos[0] == myGridPos[0]:
+                Projectile = self.evilRobot.fire()
+                if Projectile is not None:
+                    self.addGamObj("Projectile", Projectile)
+                    Projectile.move(self.evilRobot.transform.direction)
+            if targetPos[1] == myGridPos[1]:
+                Projectile = self.evilRobot.fire()
+                if Projectile is not None:
+                    self.addGamObj("Projectile", Projectile)
+                    Projectile.move(self.evilRobot.transform.direction)
 
     def pathFinding(self, start, target):
         """
@@ -84,14 +101,14 @@ class GameScene(Scene):
         The start and target position need to ve converted to
         the form (int, int) to fit in the matrix/tiledMap.
 
-        :param start: start position(int, int) as touple
-        :param target: end position(int, int) as touple
-        :return:
+        :param start: start position(int, int) as tuple.
+        :param target: end position(int, int) as tuple.
+        :return: direction of the next step on the grid as string.
         """
 
         matrix = []
         # make a copy of the tiledMap.
-        for i in range(len(self.tiledMap)-1):
+        for i in range(len(self.tiledMap)):
             matrix.append(self.tiledMap[i].copy())
 
         # change the tiledmap to 1(walkable) and 0(obstacle).

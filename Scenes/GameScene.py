@@ -8,8 +8,7 @@ from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
 from GameObject.Point import Point
 
-# TODO: investigate bug that happen if EvilRobot walk near
-#  eadge of the screen then he stop moving.
+
 # TODO: create function that clear the memory properly.
 class GameScene(Scene):
 
@@ -33,8 +32,8 @@ class GameScene(Scene):
                          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                          [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
-        self.addGamObj("Robot", Robot((50, 500)))
-        self.addGamObj("EvilRobot", EvilRobot((50, 0)))
+        self.addGamObj("Robot", Robot("Robot", (50, 500)))
+        self.addGamObj("EvilRobot", EvilRobot("EvilRobot", (50, 0)))
 
         self.player = self.getGameObj("Robot")
         self.evilRobot = self.getGameObj("EvilRobot")
@@ -84,6 +83,9 @@ class GameScene(Scene):
         # if Evil robot shoot after moving then its create a bug that
         # make the Projectile think that its over a Robot(tiledMap[][] == 2)
         # and destroying the Projectile.
+        # Fixed by add some fix time after each shot
+        # to reaction time and make the EvilRobot wait before he
+        # move again(and walk over hes own shot).
         if self.evilRobot.fireTimer <= 0:
             # Evil robot try to shoot.
             targetPos = self.player.transform.get_gridPosition()
@@ -93,6 +95,9 @@ class GameScene(Scene):
                 if Projectile is not None:
                     self.addGamObj("Projectile", Projectile)
                     Projectile.move(self.evilRobot.transform.direction)
+                    # Add some time to reaction time and make the
+                    # robot wait after each shot before walk(over his own projectile).
+                    self.evilRobot.reactionTime += self.evilRobot.fireRate/2
         if self.evilRobot.reactionTime <= 0:
             # Evil robot try to move.
             targetPos = self.player.transform.get_position()

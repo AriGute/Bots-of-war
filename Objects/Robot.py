@@ -5,8 +5,8 @@ from Objects.Projectile import Projectile
 
 
 class Robot(GameObject):
-    def __init__(self, position):
-        GameObject.__init__(self,"Robot", position)
+    def __init__(self, name="Robot", position=(0, 0)):
+        GameObject.__init__(self,name, position)
         self.img = pygame.image.load("Resources/roboTest.png")
         self.transform.set_position(position)
         self.speed = 13

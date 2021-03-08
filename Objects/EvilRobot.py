@@ -1,8 +1,8 @@
 from Objects.Robot import Robot
 
 class EvilRobot(Robot):
-    def __init__(self, position):
-        super().__init__(position)
+    def __init__(self, name = "EvilRobot", position=(0,0)):
+        super().__init__(name, position)
         self.speed = 5
         self.reactionRate = 10
         self.fireRate = 10

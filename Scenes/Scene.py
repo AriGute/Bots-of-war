@@ -1,4 +1,5 @@
 from math import trunc
+import pdb
 
 """
 Scene represent some kind of game state(for exemple: main menu, gameMode etc...).
@@ -139,10 +140,13 @@ class Scene:
                 return
             if self.tiledMap[y1][x1] == 1:
                 key = self.getObjKey(id)
+                # pdb.set_trace()
                 self.removeObj(key, x2, y2)
                 return
             if self.tiledMap[y1][x1] == 2:
                 key = self.getObjKey(id)
+                # pdb.set_trace()
+
                 self.removeObj(key, x2, y2)
                 return
 
@@ -204,6 +208,7 @@ class Scene:
         """
         print()
         for i in self._gameObjectList.values():
-            print(i.name)
+            print(i)
+        print()
         for i in self.tiledMap:
             print(i)

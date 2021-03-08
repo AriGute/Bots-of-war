@@ -80,3 +80,6 @@ class GameObject:
         while (originalAngle + angle) % 360 != targetAngle:
             angle += 90
         return angle
+
+    def __repr__(self):
+        return "ID: {id}, NAME: {n}, POSITION: {p}, TAG: {t}.".format(id=self.id, n=self.name, p=self.transform.get_gridPosition(), t=self.tag)

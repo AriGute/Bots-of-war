@@ -90,7 +90,6 @@ class GameScene(Scene):
             # Evil robot try to shoot.
             targetPos = self.player.transform.get_gridPosition()
             myGridPos = self.evilRobot.transform.get_gridPosition()
-            # if targetPos[0] == myGridPos[0] or targetPos[1] == myGridPos[1]:
             if self.rayCast(myGridPos, Transform.direction[self.evilRobot.transform.direction], 2):
                 Projectile = self.evilRobot.fire()
                 if Projectile is not None:
@@ -99,6 +98,9 @@ class GameScene(Scene):
                     # Add some time to reaction time and make the
                     # robot wait after each shot before walk(over his own projectile).
                     self.evilRobot.reactionTime += self.evilRobot.fireRate/2
+            else:
+                self.evilRobot.fireTimer = self.evilRobot.fireRate
+
         if self.evilRobot.reactionTime <= 0:
             # Evil robot try to move.
             targetPos = self.player.transform.get_position()
@@ -230,3 +232,7 @@ class GameScene(Scene):
                 cell = self.tiledMap[y][x]
                 if cell == tag:
                     return True
+                elif cell == 0:
+                    continue
+                else:
+                    return False

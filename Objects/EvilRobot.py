@@ -22,7 +22,7 @@ class EvilRobot(Robot):
         wen difficulty 1 is:
         speed = 5, reactionTime = 10, fireRate = 15
         and difficulty 100 is:
-        speed = 25, reactionTime = 1, fireRate = 5
+        speed = 10, reactionTime = 5, fireRate = 1
         :param x: difficult level
         """
         difficulty = x
@@ -32,9 +32,9 @@ class EvilRobot(Robot):
             difficulty = 1
         baseSpeed = 5
         baseReaction = 10
-        baseFireRtae = 15
+        baseFireRtae = 10
 
-        self.speed = baseSpeed+2*math.sqrt(difficulty)
-        self.reactionRate = baseReaction-(math.sqrt(difficulty)-1)
-        self.fireRate = baseFireRtae-math.sqrt(difficulty)
+        self.speed = baseSpeed+0.5*math.sqrt(difficulty)
+        self.reactionRate = baseReaction-(math.sqrt(difficulty)-5)
+        self.fireRate = baseFireRtae-(math.sqrt(difficulty)-1)
         print("setDiffcult to: {dif}, stats: speed->{s}, reaction->{r}, fireRate->{f}.".format(dif=x, s=self.speed, r=self.reactionRate, f=self.fireRate))

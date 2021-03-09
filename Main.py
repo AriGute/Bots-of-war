@@ -8,8 +8,8 @@ pathfinding - 1.0.1
 """
 
 # For any explanation for the code -> http://pygametutorials.wikidot.com/tutorials-basic
-# TODO: different kind of weapons for different kind of projectiles and stats.
 # TODO: feature that change in tier level like way the EvilRobot reatcion/fireRate/speed.
+# TODO: different kind of weapons for different kind of projectiles and stats.
 # TODO: different kind of levels/maps.
 class App:
     def __init__(self):

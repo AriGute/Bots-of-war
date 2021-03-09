@@ -6,7 +6,7 @@ class Projectile(GameObject):
     def __init__(self, position):
         GameObject.__init__(self,"ExampleObj", position)
         self.img = pygame.image.load("Resources/projectile.png")
-        self.speed = 30
+        self.speed = 40
         self.tag = 'Projectile'
         self.name = 'Projectile'
 

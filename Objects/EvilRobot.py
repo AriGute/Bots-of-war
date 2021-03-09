@@ -20,7 +20,7 @@ class EvilRobot(Robot):
         and speed.
         the difficulty is on the spectrum of 1 to 100.
         wen difficulty 1 is:
-        speed = 5, reactionTime = 10, fireRte = 15
+        speed = 5, reactionTime = 10, fireRate = 15
         and difficulty 100 is:
         speed = 25, reactionTime = 1, fireRate = 5
         :param x: difficult level

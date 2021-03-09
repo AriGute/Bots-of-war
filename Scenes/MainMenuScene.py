@@ -44,7 +44,7 @@ class MenuScene(Scene):
             # Clicking on the play button
             if self.width/2-50 < pygame.mouse.get_pos()[0] < self.width/2+50 and self.height/2-50 < pygame.mouse.get_pos()[1] < self.height/2:
                 print("Play")
-                self.nextScene(GameScene(self.nextScene, 1, 2))
+                self.nextScene(GameScene(self.nextScene, 100, 1))
 
             # Clicking on the About button
             if self.width/2-50 < pygame.mouse.get_pos()[0] < self.width/2+85 and self.height/2+10 < pygame.mouse.get_pos()[1] < self.height/2+50:

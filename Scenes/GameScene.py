@@ -8,6 +8,7 @@ from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
 from GameObject.Point import Point
 
+import pdb
 
 # TODO: create function that clear the memory properly.
 class GameScene(Scene):
@@ -89,7 +90,8 @@ class GameScene(Scene):
             # Evil robot try to shoot.
             targetPos = self.player.transform.get_gridPosition()
             myGridPos = self.evilRobot.transform.get_gridPosition()
-            if targetPos[0] == myGridPos[0] or targetPos[1] == myGridPos[1]:
+            # if targetPos[0] == myGridPos[0] or targetPos[1] == myGridPos[1]:
+            if self.rayCast(myGridPos, Transform.direction[self.evilRobot.transform.direction], 2):
                 Projectile = self.evilRobot.fire()
                 if Projectile is not None:
                     self.addGamObj("Projectile", Projectile)
@@ -104,7 +106,9 @@ class GameScene(Scene):
                 startPos = self.getGameObj("EvilRobot").transform.get_gridPosition()
                 targetPos = self.getGameObj("Robot").transform.get_gridPosition()
                 self.evilRobot.reactionTime = self.evilRobot.reactionRate
-                self.evilRobot.move(self.pathFinding(startPos, targetPos))
+                nextDirection = self.pathFinding(startPos, targetPos)
+                if nextDirection is not None:
+                    self.evilRobot.move(nextDirection)
 
 
 
@@ -147,9 +151,11 @@ class GameScene(Scene):
         path, runs = finder.find_path(start, end, grid)
 
         # get the next move in the path as touple of direction(one step to any side)
-        direction = (path[1][0] - self.evilRobot.transform.get_gridPosition()[0],
-                     path[1][1] - self.evilRobot.transform.get_gridPosition()[1])
-
+        if len(path) > 0:
+            direction = (path[1][0] - self.evilRobot.transform.get_gridPosition()[0],
+                         path[1][1] - self.evilRobot.transform.get_gridPosition()[1])
+        else:
+            return None
         # convert next step to direction('north', 'south', etc..).
         inv_map = {v: k for k, v in Transform.direction.items()}
 
@@ -190,7 +196,7 @@ class GameScene(Scene):
                       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
         }
 
-        spawnPoints = {1: [(3, 10), (14, 1)],
+        spawnPoints = {1: [(3, 10), (4, 1)],
                        2: [(1, 10), (13, 1)]
         }
 
@@ -200,3 +206,27 @@ class GameScene(Scene):
 
         return [levels[level], scaledSpawn]
 
+    def rayCast(self, pos, dir, tag):
+        """
+        Check if tiledMap[][]==tag on the line from the position
+        and in the direction from the position.
+        :param pos: start position.
+        :param dir: direction to check from the start position.
+        :param tag: the gameObject we are looking for.
+        :return: True if the Tag exist on the line or False if not.
+        """
+        cell = None
+        nextPos = pos
+        nextPos = (nextPos[0] + dir[0], nextPos[1] + dir[1])
+        x, y = 0,0
+        # pdb.set_trace()
+        while True:
+            nextPos = (nextPos[0]+dir[0], nextPos[1]+dir[1])
+            x = nextPos[0]
+            y = nextPos[1]
+            if x < 0 or x >= len(self.tiledMap[0])or y < 0 or y >= len(self.tiledMap):
+                return False
+            else:
+                cell = self.tiledMap[y][x]
+                if cell == tag:
+                    return True

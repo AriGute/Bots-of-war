@@ -12,31 +12,30 @@ from GameObject.Point import Point
 # TODO: create function that clear the memory properly.
 class GameScene(Scene):
 
-    def __init__(self, nextSceneListener):
+    def __init__(self, nextSceneListener, difficulty=1, level=1):
+        """
+        :param difficulty: the difficulty(1,..., 100) of the EvilRobot.
+        :param level: the wanted level(tiledMap and spawnPoints).
+        """
         Scene.__init__(self, nextSceneListener)
-        self.step = 50;
+        self.step = 50
         self.w, h = pygame.display.get_surface().get_size()
         self.display_surf = None
         self.Resources.append(pygame.image.load("Resources/ground_mud.png"))
         self.Resources.append(pygame.image.load("Resources/wall.png"))
-        self.tiledMap = [[0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                         [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-                         [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-                         [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-                         [0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0],
-                         [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-                         [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-                         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                         [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
-        self.addGamObj("Robot", Robot("Robot", (50, 500)))
-        self.addGamObj("EvilRobot", EvilRobot("EvilRobot", (50, 0)))
+        level = self.getLevel(level)
+        spawnPoint = level[1]
+        self.tiledMap = level[0]
+
+        self.addGamObj("Robot", Robot("Robot", spawnPoint[0]))
+        self.addGamObj("EvilRobot", EvilRobot("EvilRobot", spawnPoint[1]))
 
         self.player = self.getGameObj("Robot")
         self.evilRobot = self.getGameObj("EvilRobot")
+        self.evilRobot.setDifficult(difficulty)
+
+
 
     def eventListener(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -81,11 +80,11 @@ class GameScene(Scene):
         or fire action.
         """
         # if Evil robot shoot after moving then its create a bug that
-        # make the Projectile think that its over a Robot(tiledMap[][] == 2)
+        # make the Projectile be over a Robot(tiledMap[][] == 2)
         # and destroying the Projectile.
-        # Fixed by add some fix time after each shot
-        # to reaction time and make the EvilRobot wait before he
-        # move again(and walk over hes own shot).
+        # Fixed the bug by add some fix time after each shot
+        # to reactionTime and make the EvilRobot wait before he
+        # move again(and walk over hes own Projectile).
         if self.evilRobot.fireTimer <= 0:
             # Evil robot try to shoot.
             targetPos = self.player.transform.get_gridPosition()
@@ -156,3 +155,48 @@ class GameScene(Scene):
 
         # return next step direction as string.
         return inv_map[direction]
+
+    def getLevel(self, level):
+        """
+        This function hold dictionary of levels and spawn points for each
+        level.
+        :param level: the key as number of the wanted level.
+        :return: the wanted level as list of [level, spawnPoints]
+        """
+        levels = {1: [[0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+                      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+                      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+                      [0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0],
+                      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+                      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
+
+                  2: [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0],
+                      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+                      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+                      [0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0],
+                      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+                      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+                      [0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0],
+                      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+                      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+                      [0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+        }
+
+        spawnPoints = {1: [(3, 10), (14, 1)],
+                       2: [(1, 10), (13, 1)]
+        }
+
+        Spawn = spawnPoints[level]
+        scaledSpawn = [(Spawn[0][0]*self.step, Spawn[0][1]*self.step),
+                       (Spawn[1][0]*self.step, Spawn[1][1]*self.step)]
+
+        return [levels[level], scaledSpawn]
+

@@ -5,7 +5,7 @@ from GameObject.Point import Point
 
 class GameObject:
     # private static id for obj
-    __staticId = 0;
+    __staticId = 0
     deltaTime = None
 
     def __init__(self, name='unnamed', position=(0, 0)):

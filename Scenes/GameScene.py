@@ -7,7 +7,7 @@ from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
 from GameObject.Point import Point
-
+from math import trunc
 import pdb
 
 # TODO: create function that clear the memory properly.
@@ -38,11 +38,19 @@ class GameScene(Scene):
 
 
 
+
     def eventListener(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
-           for i in self.takeSnapShot():
-               print(i)
-           print("\n")
+            targetPos = self.player.transform.get_gridPosition()
+            targetPos = (targetPos[1], targetPos[0])
+            print(targetPos)
+            mousePos = (trunc(pygame.mouse.get_pos()[1]/50), trunc(pygame.mouse.get_pos()[0]/50))
+            print(mousePos)
+            print()
+            print(self.rayCast2(mousePos, targetPos))
+            for i in self.takeSnapShot():
+                    print(i)
+            print("\n")
 
         if event.type == pygame.KEYDOWN:
             if self.player.Moving != True:
@@ -73,6 +81,7 @@ class GameScene(Scene):
 
     def update(self, deltaTime):
         self.evilRoborAi()
+        pass
 
     def evilRoborAi(self):
         """
@@ -89,17 +98,27 @@ class GameScene(Scene):
         if self.evilRobot.fireTimer <= 0:
             # Evil robot try to shoot.
             targetPos = self.player.transform.get_gridPosition()
+            targetPos = (targetPos[1], targetPos[0])
             myGridPos = self.evilRobot.transform.get_gridPosition()
-            if self.rayCast(myGridPos, Transform.direction[self.evilRobot.transform.direction], 2):
-                Projectile = self.evilRobot.fire()
-                if Projectile is not None:
-                    self.addGamObj("Projectile", Projectile)
-                    Projectile.move(self.evilRobot.transform.direction)
-                    # Add some time to reaction time and make the
-                    # robot wait after each shot before walk(over his own projectile).
-                    self.evilRobot.reactionTime += self.evilRobot.fireRate/2
-            else:
-                self.evilRobot.fireTimer = self.evilRobot.fireRate
+            myGridPos = (myGridPos[1], myGridPos[0])
+            rayCastHit = self.rayCast2(myGridPos, targetPos)
+            # rayCastHit[myGridPos] = None
+            print(rayCastHit)
+            for hit in rayCastHit:
+                objType = rayCastHit[hit]
+                print(objType)
+                if objType == 1:
+                    break
+                elif objType == 2:
+                    Projectile = self.evilRobot.fire()
+                    if Projectile is not None:
+                        self.addGamObj("Projectile", Projectile)
+                        Projectile.move(self.evilRobot.transform.direction)
+                        # Add some time to reaction time and make the
+                        # robot wait after each shot before walk(over his own projectile).
+                        self.evilRobot.reactionTime += self.evilRobot.fireRate/2
+                    else:
+                        self.evilRobot.fireTimer = self.evilRobot.fireRate
 
         if self.evilRobot.reactionTime <= 0:
             # Evil robot try to move.
@@ -133,8 +152,8 @@ class GameScene(Scene):
             matrix.append(self.tiledMap[i].copy())
 
         # change the tiledmap to 1(walkable) and 0(obstacle).
-        for i in range(len(matrix)-1):
-            for j in range(len(matrix[0])-1):
+        for i in range(len(matrix)):
+            for j in range(len(matrix[0])):
                 if matrix[i][j] == 0:
                     matrix[i][j] = 1
                 elif matrix[i][j] == 2:
@@ -171,7 +190,20 @@ class GameScene(Scene):
         :param level: the key as number of the wanted level.
         :return: the wanted level as list of [level, spawnPoints]
         """
-        levels = {1: [[0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        levels = {0: [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
+
+                    1: [[0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                       [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
                       [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
@@ -198,7 +230,8 @@ class GameScene(Scene):
                       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
         }
 
-        spawnPoints = {1: [(3, 10), (4, 1)],
+        spawnPoints = {0: [(5, 5), (0, 1)],
+                       1: [(3, 10), (4, 1)],
                        2: [(1, 10), (13, 1)]
         }
 
@@ -208,31 +241,80 @@ class GameScene(Scene):
 
         return [levels[level], scaledSpawn]
 
-    def rayCast(self, pos, dir, tag):
-        """
-        Check if tiledMap[][]==tag on the line from the position
-        and in the direction from the position.
-        :param pos: start position.
-        :param dir: direction to check from the start position.
-        :param tag: the gameObject we are looking for.
-        :return: True if the Tag exist on the line or False if not.
-        """
-        cell = None
-        nextPos = pos
-        nextPos = (nextPos[0] + dir[0], nextPos[1] + dir[1])
-        x, y = 0,0
-        # pdb.set_trace()
-        while True:
-            nextPos = (nextPos[0]+dir[0], nextPos[1]+dir[1])
-            x = nextPos[0]
-            y = nextPos[1]
-            if x < 0 or x >= len(self.tiledMap[0])or y < 0 or y >= len(self.tiledMap):
-                return False
+    # def rayCast(self, pos, dir, tag):
+    #     """
+    #     Check if tiledMap[][]==tag on the line from the position
+    #     and in the direction from the position.
+    #     :param pos: start position.
+    #     :param dir: direction to check from the start position.
+    #     :param tag: the gameObject we are looking for.
+    #     :return: True if the Tag exist on the line or False if not.
+    #     """
+    #     cell = None
+    #     nextPos = pos
+    #     nextPos = (nextPos[0] + dir[0], nextPos[1] + dir[1])
+    #     x, y = 0, 0
+    #     while True:
+    #         nextPos = (nextPos[0]+dir[0], nextPos[1]+dir[1])
+    #         x = nextPos[0]
+    #         y = nextPos[1]
+    #         if x < 0 or x >= len(self.tiledMap[0])or y < 0 or y >= len(self.tiledMap):
+    #             return False
+    #         else:
+    #             cell = self.tiledMap[y][x]
+    #             if cell == tag:
+    #                 return True
+    #             elif cell == 0:
+    #                 continue
+    #             else:
+    #                 return False
+
+
+    def rayCast2(self, pos1, pos2):
+
+        container = {}
+        p1 = pos1
+        p2 = pos2
+
+
+        x1 = p1[1]
+        y1 = p1[0]
+        x2 = p2[1]
+        y2 = p2[0]
+
+        x, y = x1, y1
+        m = ((y1-y2)/(x1-x2) if (x1-x2) != 0 else 0)
+        lineX = lambda x: m*(x-x2)+y2
+        lineY = lambda y: (((y-y2)/m)+x2) if (m != 0) else (0 + x2)
+
+        while x <= len(self.tiledMap[0]) if x1 < x2 else x >= 0:
+            y = lineX(x)
+            y = trunc(y)
+            if y > len(self.tiledMap)-1 or x > len(self.tiledMap[0])-1 or x < 0 or y < 0:
+                break
+            container[(y,x)] = self.tiledMap[y][x]
+            if p1[1] < p2[1]:
+                x = x + 1
             else:
-                cell = self.tiledMap[y][x]
-                if cell == tag:
-                    return True
-                elif cell == 0:
-                    continue
-                else:
-                    return False
+                x = x-1
+
+        x = x1
+        y = y1
+        while y <= len(self.tiledMap) if y1 < y2 else y >= 0:
+            x = lineY(y)
+            x = abs(trunc(x))
+            if y > len(self.tiledMap)-1 or x > len(self.tiledMap[0])-1 or x < 0 or y < 0:
+                break
+            container[(y, x)] = self.tiledMap[y][x]
+
+            if p1[0] < p2[0]:
+                y = y + 1
+            else:
+                y = y - 1
+        # pdb.set_trace()
+        # for cell in container.keys():
+        #     if self.tiledMap[cell[0]][cell[1]] == 2:
+        #         print("found it!")
+        #         break
+        container.pop(pos1)
+        return container

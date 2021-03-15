@@ -1,7 +1,7 @@
 from Objects.Robot import Robot
 import math
 class EvilRobot(Robot):
-    def __init__(self, name = "EvilRobot", position=(0,0)):
+    def __init__(self, name="EvilRobot", position=(0,0)):
         super().__init__(name, position)
         self.speed = 5
         self.reactionRate = 10
@@ -38,3 +38,4 @@ class EvilRobot(Robot):
         self.reactionRate = baseReaction-(math.sqrt(difficulty)-5)
         self.fireRate = baseFireRtae-(math.sqrt(difficulty)-1)
         print("setDiffcult to: {dif}, stats: speed->{s}, reaction->{r}, fireRate->{f}.".format(dif=x, s=self.speed, r=self.reactionRate, f=self.fireRate))
+

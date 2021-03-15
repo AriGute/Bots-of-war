@@ -1,5 +1,4 @@
 from math import trunc
-import pdb
 
 """
 Scene represent some kind of game state(for exemple: main menu, gameMode etc...).

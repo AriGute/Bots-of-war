@@ -8,6 +8,8 @@ pathfinding - 1.0.1
 """
 
 # For any explanation for the code -> http://pygametutorials.wikidot.com/tutorials-basic
+# TODO: make EvilRobot "next target" robot position only if he is infront of him(see him).
+# TODO: make more specification of the "gameState" in the dataset.
 # TODO: different kind of weapons for different kind of projectiles and stats.
 class App:
     def __init__(self):

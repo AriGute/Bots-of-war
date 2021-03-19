@@ -106,6 +106,12 @@ class GameScene(Scene):
                 if objType == 1:
                     break
                 elif objType == 2:
+
+                    newPath = self.pathFinding(myGridPos, targetPos)
+                    if newPath is not None:
+                        # Path is set for the last position EvilRobot saw the Player Robot.
+                        self.evilRobot.path = self.pathFinding(myGridPos, targetPos)
+
                     if self.isInfront(myGridPos,
                                       Transform.direction[self.evilRobot.transform.direction], 2):
                         Projectile = self.evilRobot.fire()
@@ -113,21 +119,45 @@ class GameScene(Scene):
                             self.addGamObj("Projectile", Projectile)
                             Projectile.move(self.evilRobot.transform.direction)
                             # Add some time to reaction time and make the
-                            # robot wait after each shot before walk(over his own projectile).
+                            # Robot wait after each shot before walk(over his own projectile).
                             self.evilRobot.reactionTime += self.evilRobot.fireRate/2
                         else:
                             self.evilRobot.fireTimer = self.evilRobot.fireRate
 
         if self.evilRobot.reactionTime <= 0:
+            # startPos = self.getGameObj("EvilRobot").transform.get_gridPosition()
+            targetPos = self.getGameObj("Robot").transform.get_gridPosition()
+            path = self.evilRobot.path
             # Evil robot try to move.
-            targetPos = self.player.transform.get_position()
-            if self.evilRobot.transform.distance(Point(targetPos)) > self.step:
-                startPos = self.getGameObj("EvilRobot").transform.get_gridPosition()
-                targetPos = self.getGameObj("Robot").transform.get_gridPosition()
-                self.evilRobot.reactionTime = self.evilRobot.reactionRate
-                nextDirection = self.pathFinding(startPos, targetPos)
-                if nextDirection is not None:
-                    self.evilRobot.move(nextDirection)
+            if len(path) > 1:
+                if self.evilRobot.transform.distance(Point(targetPos)) > self.step:
+                    print("path > 1")
+                    self.evilRobot.reactionTime = self.evilRobot.reactionRate
+                    direction = (path[1][0] - self.evilRobot.transform.get_gridPosition()[0],
+                                 path[1][1] - self.evilRobot.transform.get_gridPosition()[1])
+
+                    # convert next step to direction('north', 'south', etc..).
+                    inv_map = {v: k for k, v in Transform.direction.items()}
+
+                    print(path)
+                    if direction == (0, 0):
+                        print("pop (0,0)")
+                        self.evilRobot.path.pop(0)
+                        return
+
+                    nextDirection = inv_map[direction]
+
+                    if nextDirection is not None:
+                        self.evilRobot.move(nextDirection)
+                        self.evilRobot.path.pop(0)
+                else:
+                    pass
+
+            else:
+                # EvilRobot dont know where is the Player Robot.
+                print("path == 0")
+                # self.evilRobot.path = self.pathFinding(startPos, targetPos)
+
 
 
 
@@ -181,7 +211,7 @@ class GameScene(Scene):
         inv_map = {v: k for k, v in Transform.direction.items()}
 
         # return next step direction as string.
-        return inv_map[direction]
+        return path
 
     def getLevel(self, level):
         """

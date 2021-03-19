@@ -8,6 +8,7 @@ class EvilRobot(Robot):
         self.fireRate = 10
         self.reactionTime = 0
         self.fireTimer = 0
+        self.path = []
 
     def update(self, deltaTime):
         super().update(deltaTime)

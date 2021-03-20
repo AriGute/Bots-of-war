@@ -37,17 +37,8 @@ class GameScene(Scene):
         self.evilRobot.setDifficult(difficulty)
 
 
-
-
     def eventListener(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
-            # targetPos = self.player.transform.get_gridPosition()
-            # targetPos = targetPos
-            # print(targetPos)
-            # mousePos = (trunc(pygame.mouse.get_pos()[0]/50), trunc(pygame.mouse.get_pos()[1]/50))
-            # print(mousePos)
-            # print()
-            # print(self.rayCast2(mousePos, targetPos))
             for i in self.takeSnapShot():
                     print(i)
             print("\n")
@@ -89,23 +80,29 @@ class GameScene(Scene):
         calc the EvilRobot next move
         or fire action.
         """
-        # if Evil robot shoot after moving then its create a bug that
-        # make the Projectile be over a Robot(tiledMap[][] == 2)
-        # and destroying the Projectile.
-        # Fixed the bug by add some fix time after each shot
-        # to reactionTime and make the EvilRobot wait before he
-        # move again(and walk over hes own Projectile).
         if self.evilRobot.fireTimer <= 0:
             # Evil robot try to shoot.
             targetPos = self.player.transform.get_gridPosition()
             myGridPos = self.evilRobot.transform.get_gridPosition()
 
             rayCastHit = self.rayCast(myGridPos, targetPos)
+
             for hit in rayCastHit:
                 objType = rayCastHit[hit]
+
                 if objType == 1:
+                    # Wall is blocking EvilRobot vision over Player Robot.
+                    self.evilRobot.targetIsVisible = False
                     break
                 elif objType == 2:
+
+                    newPath = self.pathFinding(myGridPos, targetPos)
+                    if newPath is not None:
+                        # Path is set for the last position EvilRobot saw the Player Robot.
+                        self.evilRobot.path = self.pathFinding(myGridPos, targetPos)
+                        # Player Robot is visible to EvilRobot.
+                        self.evilRobot.targetIsVisible = True
+
                     if self.isInfront(myGridPos,
                                       Transform.direction[self.evilRobot.transform.direction], 2):
                         Projectile = self.evilRobot.fire()
@@ -113,21 +110,47 @@ class GameScene(Scene):
                             self.addGamObj("Projectile", Projectile)
                             Projectile.move(self.evilRobot.transform.direction)
                             # Add some time to reaction time and make the
-                            # robot wait after each shot before walk(over his own projectile).
+                            # Robot wait after each shot before walk(over his own projectile).
                             self.evilRobot.reactionTime += self.evilRobot.fireRate/2
                         else:
                             self.evilRobot.fireTimer = self.evilRobot.fireRate
 
         if self.evilRobot.reactionTime <= 0:
+            # startPos = self.getGameObj("EvilRobot").transform.get_gridPosition()
+            targetPos = self.getGameObj("Robot").transform.get_gridPosition()
+            path = self.evilRobot.path
             # Evil robot try to move.
-            targetPos = self.player.transform.get_position()
-            if self.evilRobot.transform.distance(Point(targetPos)) > self.step:
-                startPos = self.getGameObj("EvilRobot").transform.get_gridPosition()
-                targetPos = self.getGameObj("Robot").transform.get_gridPosition()
-                self.evilRobot.reactionTime = self.evilRobot.reactionRate
-                nextDirection = self.pathFinding(startPos, targetPos)
-                if nextDirection is not None:
-                    self.evilRobot.move(nextDirection)
+            if len(path) > 1:
+                if self.evilRobot.transform.distance(Point(targetPos)) > self.step:
+                    print("path > 1")
+                    self.evilRobot.reactionTime = self.evilRobot.reactionRate
+                    direction = (path[1][0] - self.evilRobot.transform.get_gridPosition()[0],
+                                 path[1][1] - self.evilRobot.transform.get_gridPosition()[1])
+
+                    # convert next step to direction('north', 'south', etc..).
+                    inv_map = {v: k for k, v in Transform.direction.items()}
+
+                    print(path)
+                    if direction == (0, 0):
+                        print("pop (0,0)")
+                        self.evilRobot.path.pop(0)
+                        return
+
+                    nextDirection = inv_map[direction]
+
+                    if nextDirection is not None:
+                        self.evilRobot.move(nextDirection)
+                        self.evilRobot.path.pop(0)
+                else:
+                    # EvilRobot is in front his target(one step before).
+                    pass
+
+            else:
+                # EvilRobot don't know where is the Player Robot.
+                # TODO: pick Random position on the tiledmap and check if it have no obstacle
+                #  and then take this as target path.
+                pass
+
 
 
 
@@ -181,7 +204,7 @@ class GameScene(Scene):
         inv_map = {v: k for k, v in Transform.direction.items()}
 
         # return next step direction as string.
-        return inv_map[direction]
+        return path
 
     def getLevel(self, level):
         """
@@ -203,18 +226,18 @@ class GameScene(Scene):
                       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
 
-                  1: [[0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                  1: [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-                      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-                      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-                      [0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0],
-                      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-                      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+                      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+                      [0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0],
+                      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+                      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+                      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+                      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+                      [0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0],
+                      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
                       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
 
                   2: [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                       [0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0],
@@ -271,7 +294,6 @@ class GameScene(Scene):
 
 
     def rayCast(self, pos1, pos2):
-
         container = {}
         p1 = (pos1[1], pos1[0])
         p2 = (pos2[1], pos2[0])
@@ -311,10 +333,6 @@ class GameScene(Scene):
                 y = y + 1
             else:
                 y = y - 1
-        # pdb.set_trace()
-        # for cell in container.keys():
-        #     if self.tiledMap[cell[0]][cell[1]] == 2:
-        #         print("found it!")
-        #         break
+
         container.pop((pos1[1], pos1[0]))
         return container

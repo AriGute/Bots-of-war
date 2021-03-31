@@ -10,6 +10,7 @@ from GameObject.Point import Point
 from math import trunc
 import pdb
 
+# TODO: if player and enemy facing infront one to another then fire function become melle hit function.
 # TODO: create function that clear the memory properly.
 class GameScene(Scene):
 
@@ -33,14 +34,27 @@ class GameScene(Scene):
         self.addGamObj("EvilRobot", EvilRobot("EvilRobot", spawnPoint[1]))
 
         self.player = self.getGameObj("Robot")
+        self.player.addFunctionRef('cellIsWalkAble', self.cellIsWalkAble)
         self.evilRobot = self.getGameObj("EvilRobot")
+        self.evilRobot.addFunctionRef('cellIsWalkAble', self.cellIsWalkAble)
+
         self.evilRobot.setDifficult(difficulty)
 
+        self.font = pygame.font.Font('freesansbold.ttf', 32)
+        self.text = self.font.render('100', True, (255, 255, 255))
+        self.PlayerHealthLabel = self.text.get_rect()
+        self.PlayerHealthLabel.center = (100, 650)
+        self.EnemyHealthLabel = self.text.get_rect()
+        self.EnemyHealthLabel.center = (600, 650)
 
     def eventListener(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
-            for i in self.takeSnapShot():
-                    print(i)
+            # self.takeSnapShot()
+            # for i in self._gameObjectList.keys():
+            #     print(i)
+            print(self.evilRobot.getTag())
+            print(self.player.getTag())
+
             print("\n")
 
         if event.type == pygame.KEYDOWN:
@@ -72,6 +86,11 @@ class GameScene(Scene):
 
     def update(self, deltaTime):
         self.evilRoborAi()
+        pygame.draw.rect(self.display_surf, (0, 0, 0), (0, 600, 800, 700))
+        self.text = self.font.render('Player: '+str(self.player.health), True, (255, 255, 255))
+        self.display_surf.blit(self.text, self.PlayerHealthLabel)
+        self.text = self.font.render('Enemy: '+str(self.evilRobot.health), True, (255, 255, 255))
+        self.display_surf.blit(self.text, self.EnemyHealthLabel)
         pass
 
     def evilRoborAi(self):
@@ -86,7 +105,7 @@ class GameScene(Scene):
             myGridPos = self.evilRobot.transform.get_gridPosition()
 
             rayCastHit = self.rayCast(myGridPos, targetPos)
-
+            # print(self.evilRobot.targetIsVisible)
             for hit in rayCastHit:
                 objType = rayCastHit[hit]
 
@@ -122,7 +141,6 @@ class GameScene(Scene):
             # Evil robot try to move.
             if len(path) > 1:
                 if self.evilRobot.transform.distance(Point(targetPos)) > self.step:
-                    print("path > 1")
                     self.evilRobot.reactionTime = self.evilRobot.reactionRate
                     direction = (path[1][0] - self.evilRobot.transform.get_gridPosition()[0],
                                  path[1][1] - self.evilRobot.transform.get_gridPosition()[1])
@@ -130,9 +148,7 @@ class GameScene(Scene):
                     # convert next step to direction('north', 'south', etc..).
                     inv_map = {v: k for k, v in Transform.direction.items()}
 
-                    print(path)
                     if direction == (0, 0):
-                        print("pop (0,0)")
                         self.evilRobot.path.pop(0)
                         return
 

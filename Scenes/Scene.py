@@ -1,4 +1,5 @@
 from math import trunc
+from GameObject.Tag import Tag
 
 """
 Scene represent some kind of game state(for exemple: main menu, gameMode etc...).
@@ -64,17 +65,21 @@ class Scene:
         while key in self._gameObjectList.keys():
             # if there is alredy existing key
             splitKey = str(key).split(" ")
+            # print(splitKey[-1])
             if splitKey[-1].isdigit():
                 # if the key have digit in the and after space(someKey 1)
                 # then add +1 to the digit at the end
                 # TODO: change 'name 1' to 'name 1name 1' instead of 'name 2'(need to be fixed!).
-                for i in range(0, len(splitKey)-1):
-                    key += splitKey[i] + " "
-                key += str(int(splitKey[-1])+1)
+                key = splitKey[0]+" "+str(int(splitKey[1])+1)
+                print(key)
+                # for i in range(0, len(splitKey)-1):
+                #     key += splitKey[i] + " "
+                # key += str(int(splitKey[-1])+1)
             else:
                 # if the key don't have any digit at the end then add one to make the key unique.
                 key += " 1"
         obj.addFunctionRef('rePos', self.rePosObj)
+        obj.name = key
         self._gameObjectList[key] = obj
 
 
@@ -106,7 +111,7 @@ class Scene:
             x = trunc(objPos[0] / self.step)
             y = trunc(objPos[1] / self.step)
             # self.tiledMap[y][x] = 0
-            for pos in [(x,y), (x+1,y), (x,y+1), (x+1,y+1)]:
+            for pos in [(x, y), (x+1, y), (x, y+1), (x+1, y+1)]:
                 if pos[1] < len(self.tiledMap) and pos[0] < len(self.tiledMap[0]):
                     if self.tiledMap[pos[1]][pos[0]] > 0:
                         if self.tiledMap[pos[1]][pos[0]] < len(self.Resources):
@@ -117,16 +122,50 @@ class Scene:
                         self.display_surf.blit(self.Resources[0], (self.step * pos[0], self.step * pos[1]))
 
     def takeSnapShot(self):
+        """
+        This function generate dataset for later usage for the AI module.
+        dataset contain the features:
+            Tiled map: position of everything.
+            Player robot health.
+            Player fireTime: if fireTime is 0 then the Player can shoot again.
+            Player robot direction: direction translated to 1,..,4(one for each direction).
+            EvilRobot health.
+            EvilRobot fireTime: if fireTime is 0 then the EvilRobot can shoot again.
+            EvilRobot direction: translated to 1,..,4 one for each direction.
+            If evilRobot currently know where is the player robot(0 or 1).
+        :return: snapshot of the state of the game as list.
+        """
+        snapshot = [self.tiledMap]
+        player = self.getGameObj("Robot")
+        evilRobot = self.getGameObj("EvilRobot")
+        dir = {
+            "west": 1,
+            "east": 2,
+            "south": 3,
+            "north": 4,
+        }
+
+        snapshot.append(player.health)
+        snapshot.append(int(player.fireTimer))
+        snapshot.append(dir[player.transform.direction])
+        snapshot.append(evilRobot.health)
+        snapshot.append(int(evilRobot.fireTimer))
+        snapshot.append(dir[evilRobot.transform.direction])
+        snapshot.append(1 if evilRobot.targetIsVisible else 0)
+
+        # prints for debuging.
         print()
-        snapshot = self.tiledMap
-        for i in self._gameObjectList.values():
-            print(i.name)
+        for i in snapshot[0]:
+            print(i, end="\n")
+        for i in snapshot[1:]:
+            print(i)
+
         return snapshot
 
     def nextScene(self, scene):
         self.endSceneListener(scene)
 
-    def rePosObj(self, oldPos, newPos, id, tag):
+    def rePosObj(self, oldPos, newPos, id, tag, name):
         if newPos is not None and oldPos is not None:
             x1 = trunc(newPos[0] / self.step)
             y1 = trunc(newPos[1] / self.step)
@@ -142,19 +181,32 @@ class Scene:
                 # pdb.set_trace()
                 self.removeObj(key, x2, y2)
                 return
-            if self.tiledMap[y1][x1] == 2:
-                key = self.getObjKey(id)
-                # pdb.set_trace()
 
-                self.removeObj(key, x2, y2)
-                return
 
             type = 0
-            if tag == 'Player':
+            if tag == Tag.types[1]:
+                '''type = Player'''
                 type = 2
-            elif tag == 'Projectile':
+            if tag == Tag.types[2]:
+                '''type = EvilRobot'''
+                type = 2
+            elif tag == Tag.types[3]:
+                '''type = Projectile'''
                 # if Projectile spawned out of Robot then don't override the Robot from the tiledmap.
-                if self.tiledMap[y2][x2] == 2:
+                if self.tiledMap[y1][x1] == 2:
+                    projectile = self.getGameObj(name)
+                    if projectile.source == Tag.types[1]:
+                        '''type = Player'''
+                        self.getGameObj("EvilRobot").health -= projectile.damage
+                        # print("EvilRobot health: "+str(self.getGameObj("EvilRobot").health))
+                    if projectile.source == Tag.types[2]:
+                        '''type = EvilRobot'''
+                        self.getGameObj("Robot").health -= projectile.damage
+                        # print("Player health: "+str(self.getGameObj("Robot").health))
+
+                    key = self.getObjKey(id)
+                    # pdb.set_trace()
+                    self.removeObj(key, x2, y2)
                     return
                 else:
                     type = -1

@@ -8,14 +8,13 @@ pathfinding - 1.0.1
 """
 
 # For any explanation for the code -> http://pygametutorials.wikidot.com/tutorials-basic
-# TODO: make more specification of the "gameState" in the dataset.
 # TODO: different kind of weapons for different kind of projectiles and stats.
 class App:
     def __init__(self):
         pygame.display.set_caption('Bots Of War')
         self._running = True
         self._display_surf = None
-        self.size = self.weight, self.height = 800, 600
+        self.size = self.weight, self.height = 800, 700
         self.clock = pygame.time.Clock()
         self.fps = 30
         self.deltaTime = 0
@@ -58,7 +57,6 @@ class App:
     def nextScene(self, scene = None):
         self.scene = scene
         self.scene.drawTiledMap(self._display_surf)
-
 
 if __name__ == "__main__":
     theApp = App()

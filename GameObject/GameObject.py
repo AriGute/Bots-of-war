@@ -12,11 +12,14 @@ class GameObject:
         self.id = self.__GenerateId()
         self.name = name
         self.funcRefDict = {}
-        self.tag = Tag()
+        self.tag = Tag.types[0]
         self.transform = Transform(position)
         self.img = None
         self.Moving = False
         self.step = 50
+
+    def getTag(self):
+        return self.tag
 
     def __GenerateId(self):
         """
@@ -61,16 +64,38 @@ class GameObject:
         self.funcRefDict[key] = val
 
     def move(self, direciton):
-        if self.Moving == False:
-            self.img = pygame.transform.rotate(self.img, self._getRotate(self.transform.direction, direciton))
-            self.transform.direction = direciton
-        if (self.Moving is False):
-            self.Moving = True
-            pos = self.transform.get_position()
-            dir = Transform.direction.get(direciton)
-            self.nextStep = (pos[0] + dir[0] * self.step, pos[1] + dir[1] * self.step)
-            self.funcRefDict['rePos'](pos, self.nextStep, self.id, self.tag)
-            return self.nextStep
+        """
+        If Game object is not facing the same direction as the givin direction
+        then rotate first then wait for the next move command(skip movment).
+        if facing the same direction then move in that direction one cell.
+
+        :param direciton: the next direction the game object need to be facing.
+        :return: next cell in the tiled map.
+        """
+        if self.transform.direction == direciton:
+            # Rotate to the direction before moving.
+            if (self.Moving is False):
+                # If not moving(its mean GameObject can take another move)
+                pos = self.transform.get_position()
+                dir = Transform.direction.get(direciton)
+                self.nextStep = (pos[0] + dir[0] * self.step, pos[1] + dir[1] * self.step)
+                if self.tag in [Tag.types[1], Tag.types[2]]:
+                    # If GameObject is Player or EvilRobot.
+                    if self.funcRefDict['cellIsWalkAble'](self.nextStep[0], self.nextStep[1]):
+                        # If next cell on the tiledmap is "walkable".
+                        self.funcRefDict['rePos'](pos, self.nextStep, self.id, self.tag, self.name)
+                        self.Moving = True
+                        return self.nextStep
+                else:
+                    # If GameObject is anything else then Player or evilRobot(exemple: projectile).
+                    self.funcRefDict['rePos'](pos, self.nextStep, self.id, self.tag, self.name)
+                    self.Moving = True
+                    return self.nextStep
+                return pos
+        else:
+            if self.Moving == False:
+                self.img = pygame.transform.rotate(self.img, self._getRotate(self.transform.direction, direciton))
+                self.transform.direction = direciton
 
     def _getRotate(self, originDir, targetDir):
         dirDict = {"north": 90, "south": 270, "east": 0, "west": 180}

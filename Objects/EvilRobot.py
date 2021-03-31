@@ -1,5 +1,7 @@
 from Objects.Robot import Robot
 import math
+from GameObject.Tag import Tag
+
 class EvilRobot(Robot):
     def __init__(self, name="EvilRobot", position=(0,0)):
         super().__init__(name, position)
@@ -10,6 +12,7 @@ class EvilRobot(Robot):
         self.fireTimer = 0
         self.path = []
         self.targetIsVisible = False
+        self.tag = Tag.types[2]
 
     def update(self, deltaTime):
         super().update(deltaTime)
@@ -34,7 +37,7 @@ class EvilRobot(Robot):
             difficulty = 1
         baseSpeed = 5
         baseReaction = 10
-        baseFireRtae = 10
+        baseFireRtae = 20
 
         self.speed = baseSpeed+0.5*math.sqrt(difficulty)
         self.reactionRate = baseReaction-(math.sqrt(difficulty)-5)

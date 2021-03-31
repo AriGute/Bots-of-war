@@ -1,5 +1,5 @@
 class Tag:
-    types = ['undefined', 'Player', 'Enemy', 'Projectile']
+    types = ['undefined', 'Player', 'EvilRobot', 'Projectile']
 
     # Initial tag is a string set to Undefined.
     def __init__(self, tag='undefined'):

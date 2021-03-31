@@ -2,6 +2,7 @@ import pygame
 from GameObject.GameObject import GameObject
 from GameObject.Transform import Transform
 from Objects.Projectile import Projectile
+from GameObject.Tag import Tag
 
 
 class Robot(GameObject):
@@ -10,17 +11,22 @@ class Robot(GameObject):
         self.img = pygame.image.load("Resources/roboTest.png")
         self.transform.set_position(position)
         self.speed = 13
-        self.fireRate = 3
+        self.fireRate = 10
         self.fireTimer = 0
         self.nextStep = None
         self.tag = 'Player'
         self.w, h = pygame.display.get_surface().get_size()
+        self.MaxHealth = 100
+        self.health = 100
+        self.tag = Tag.types[1]
 
 
     def update(self, deltaTime):
         super().update(deltaTime)
         if self.fireTimer > 0:
             self.fireTimer -= deltaTime
+            if self.fireTimer < 0:
+                self.fireTimer = 0
 
     def fire(self):
         if self.fireTimer > 0:
@@ -32,7 +38,7 @@ class Robot(GameObject):
         # Check if projectile try to spawn out of screen bounds
         if spawnPos[0] < 0 or spawnPos[0] >= Transform.w or spawnPos[1] < 0 or spawnPos[1] >= Transform.h:
             return None
-        return Projectile(pos)
+        return Projectile(pos, self.tag)
 
     def botAi(self, target):
         nextMove = self.transform.get_position()

@@ -139,7 +139,7 @@ class GameScene(Scene):
             targetPos = self.getGameObj("Robot").transform.get_gridPosition()
             path = self.evilRobot.path
             # Evil robot try to move.
-            if len(path) > 1:
+            if len(path) > 2:
                 if self.evilRobot.transform.distance(Point(targetPos)) > self.step:
                     self.evilRobot.reactionTime = self.evilRobot.reactionRate
                     direction = (path[1][0] - self.evilRobot.transform.get_gridPosition()[0],
@@ -147,9 +147,8 @@ class GameScene(Scene):
 
                     # convert next step to direction('north', 'south', etc..).
                     inv_map = {v: k for k, v in Transform.direction.items()}
-
-                    if direction == (0, 0):
-                        self.evilRobot.path.pop(0)
+                    if direction not in Transform.direction.values():
+                        self.evilRobot.path = self.pathFinding(self.evilRobot.transform.get_gridPosition(), path[-1])
                         return
 
                     nextDirection = inv_map[direction]
@@ -218,7 +217,6 @@ class GameScene(Scene):
             return None
         # convert next step to direction('north', 'south', etc..).
         inv_map = {v: k for k, v in Transform.direction.items()}
-
         # return next step direction as string.
         return path
 

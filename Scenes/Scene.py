@@ -223,6 +223,8 @@ class Scene:
         """
         i = trunc(y/self.step)
         j = trunc(x/self.step)
+        if j < 0 or j >= self.weight / self.step or i < 0 or i >= self.height / self.step:
+            return False
         if self.tiledMap[i][j] == 0:
             return True
         return False

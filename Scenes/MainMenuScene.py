@@ -44,7 +44,7 @@ class MenuScene(Scene):
             # Clicking on the play button
             if self.width/2-50 < pygame.mouse.get_pos()[0] < self.width/2+50 and self.height/2-50 < pygame.mouse.get_pos()[1] < self.height/2:
                 print("Play")
-                self.nextScene(GameScene(self.nextScene, 50, 1))
+                self.nextScene(GameScene(self.nextScene, 1, 1))
 
             # Clicking on the About button
             if self.width/2-50 < pygame.mouse.get_pos()[0] < self.width/2+85 and self.height/2+10 < pygame.mouse.get_pos()[1] < self.height/2+50:
@@ -53,20 +53,15 @@ class MenuScene(Scene):
             # Clicking on the Quit button
             if self.width/2-50 < pygame.mouse.get_pos()[0] < self.width/2+50 and self.height/2+60 < pygame.mouse.get_pos()[1] < self.height/2+100:
                 print("Quit")
-                # pygame.quit()
-                # sys.exit()
+                pygame.quit()
+                sys.exit()
 
     def drawTiledMap(self, display_surf):
-        """
-        Draw Tilled map on the display surface once.
-        """
-        self.display_surf = display_surf
-        for j in range(0, len(self.tiledMap)):
-            for i in range(0, len(self.tiledMap[0])):
-                display_surf.blit(self.Resources[self.tiledMap[j][i]], (self.step * i, self.step * j))
-
+        super().drawTiledMap(display_surf)
         self.makeButtons()
         self.makeTitle()
+        display_surf.blit(pygame.image.load("Resources/info_bar.png"), (0, 600))
+
 
     def makeButtons(self):
         self.width = self.display_surf.get_width()

@@ -40,12 +40,12 @@ class GameScene(Scene):
 
         self.evilRobot.setDifficult(difficulty)
 
-        self.font = pygame.font.Font('freesansbold.ttf', 32)
-        self.text = self.font.render('100', True, (255, 255, 255))
+        self.font = pygame.font.Font('Resources/digital-7.ttf', 32)
+        self.text = self.font.render('100', True, (255, 0, 0))
         self.PlayerHealthLabel = self.text.get_rect()
-        self.PlayerHealthLabel.center = (100, 650)
+        self.PlayerHealthLabel.center = (215, 648)
         self.EnemyHealthLabel = self.text.get_rect()
-        self.EnemyHealthLabel.center = (600, 650)
+        self.EnemyHealthLabel.center = (725, 648)
 
     def eventListener(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -86,12 +86,19 @@ class GameScene(Scene):
 
     def update(self, deltaTime):
         self.evilRoborAi()
-        pygame.draw.rect(self.display_surf, (0, 0, 0), (0, 600, 800, 700))
-        self.text = self.font.render('Player: '+str(self.player.health), True, (255, 255, 255))
+        self.display_surf.blit(pygame.image.load("Resources/info_bar.png"), (0, 600))
+        if self.player.health <= 0 or self.evilRobot.health <= 0:
+            self.gameOver()
+        color_red = (255, 0, 0)
+        self.text = self.font.render(str(self.player.health), True, color_red)
         self.display_surf.blit(self.text, self.PlayerHealthLabel)
-        self.text = self.font.render('Enemy: '+str(self.evilRobot.health), True, (255, 255, 255))
+        self.text = self.font.render(str(self.evilRobot.health), True, color_red)
         self.display_surf.blit(self.text, self.EnemyHealthLabel)
         pass
+
+    def gameOver(self):
+        from Scenes.MainMenuScene import MenuScene
+        self.nextScene(MenuScene(self.nextScene))
 
     def evilRoborAi(self):
         """

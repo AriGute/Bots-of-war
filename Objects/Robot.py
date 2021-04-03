@@ -8,7 +8,7 @@ from GameObject.Tag import Tag
 class Robot(GameObject):
     def __init__(self, name="Robot", position=(0, 0)):
         GameObject.__init__(self,name, position)
-        self.img = pygame.image.load("Resources/roboTest.png")
+        self.img = pygame.image.load("Resources/robot.png")
         self.transform.set_position(position)
         self.speed = 13
         self.fireRate = 10

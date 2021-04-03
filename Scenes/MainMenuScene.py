@@ -67,17 +67,19 @@ class MenuScene(Scene):
         self.width = self.display_surf.get_width()
         self.height = self.display_surf.get_height()
 
-        playtext = self.textFont.render('Play', True, self.colorBlue)
-        quittext = self.textFont.render('Quit', True, self.colorBlue)
-        abouttext = self.textFont.render('About', True, self.colorBlue)
+        playtext = self.textFont.render('Play', True, self.colorBlack)
+        quittext = self.textFont.render('Quit', True, self.colorBlack)
+        abouttext = self.textFont.render('About', True, self.colorBlack)
 
         self.display_surf.blit(playtext, (self.width / 2 - 50, self.height / 2 - 50))
         self.display_surf.blit(abouttext, (self.width / 2 - 50, self.height / 2))
         self.display_surf.blit(quittext, (self.width / 2 - 50, self.height / 2 + 50))
 
     def makeTitle(self):
-        title = self.textFont.render(MenuScene.title, True, MenuScene.colorBlack)
-        self.display_surf.blit(title, (self.width / 4 + 50, self.height - 475))
+        self.display_surf.blit(pygame.image.load("Resources/logo.png"), (self.width / 4 + 50, self.height - 475))
+
+        # title = self.textFont.render(MenuScene.title, True, MenuScene.colorBlack)
+        # self.display_surf.blit(title, (self.width / 4 + 50, self.height - 475))
 
     def update(self, deltaTime):
         pass

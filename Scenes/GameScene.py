@@ -10,6 +10,7 @@ from GameObject.Point import Point
 from math import trunc
 import pdb
 
+# TODO: if player is bihind evilrobot then evilrobot cant see him.
 # TODO: if player and enemy facing infront one to another then fire function become melle hit function.
 # TODO: create function that clear the memory properly.
 class GameScene(Scene):

@@ -48,6 +48,8 @@ class GameScene(Scene):
         self.EnemyHealthLabel = self.text.get_rect()
         self.EnemyHealthLabel.center = (725, 648)
 
+        self.direction = None
+        self.inputTime = 0.0
     def eventListener(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             # self.takeSnapShot()
@@ -60,32 +62,47 @@ class GameScene(Scene):
 
         if event.type == pygame.KEYDOWN:
             if self.player.Moving != True:
-                robot = self.player
                 robotNextPos = None
                 Projectile = None
-                direction = None
                 if event.key == pygame.K_LEFT:
-                    direction = 'west'
+                    self.direction = 'west'
                 elif event.key == pygame.K_RIGHT:
-                    direction = 'east'
+                    self.direction = 'east'
                 elif event.key == pygame.K_UP:
-                    direction = 'north'
+                    self.direction = 'north'
                 elif event.key == pygame.K_DOWN:
-                    direction = 'south'
+                    self.direction = 'south'
                 elif event.key == pygame.K_SPACE:
-                    Projectile = robot.fire()
+                    Projectile = self.player.fire()
                     if Projectile is not None:
                         self.addGamObj("Projectile", Projectile)
-                        Projectile.move(robot.transform.direction)
+                        Projectile.move(self.player.transform.direction)
 
-                if direction is not None:
-                    nextPos = self.player.transform.calcNextPos(direction)
-                    if self.cellIsWalkAble(nextPos[0], nextPos[1]):
-                        if self.player.transform.inBounds(nextPos):
-                            robot.move(direction)
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_LEFT:
+                self.direction = None
+            elif event.key == pygame.K_RIGHT:
+                self.direction = None
+            elif event.key == pygame.K_UP:
+                self.direction = None
+            elif event.key == pygame.K_DOWN:
+                self.direction = None
+
+
 
 
     def update(self, deltaTime):
+
+        if self.inputTime > 0:
+            self.inputTime -= deltaTime
+        else:
+            self.inputTime = 0.5
+            if self.direction is not None:
+                nextPos = self.player.transform.calcNextPos(self.direction)
+                if self.cellIsWalkAble(nextPos[0], nextPos[1]):
+                    if self.player.transform.inBounds(nextPos):
+                        self.player.move(self.direction)
+
         self.evilRoborAi()
         self.display_surf.blit(pygame.image.load("Resources/info_bar.png"), (0, 600))
         if self.player.health <= 0 or self.evilRobot.health <= 0:
